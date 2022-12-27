@@ -16,8 +16,8 @@ encoder_font_size = 26
 @dataclass
 class Encoder:
     index: int
-    primary_text: Optional[str] = None
-    secondary_text: Optional[str] = None
+    layer_a_primary_text: Optional[str] = None
+    layer_a_secondary_text: Optional[str] = None
 
     def __post_init__(self):
         if self.index < 1 or self.index > 8:
@@ -31,10 +31,10 @@ class Encoder:
     def emit_text(self) -> str:
         memo = ""
 
-        if self.primary_text is not None:
-            memo += f'<text x="{self.mid_x}" y="{encoder_y_primary_text}" font-size="{encoder_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.primary_text}</text>'
+        if self.layer_a_primary_text is not None:
+            memo += f'<text x="{self.mid_x}" y="{encoder_y_primary_text}" font-size="{encoder_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a_primary_text}</text>'
 
-        if self.secondary_text is not None:
-            memo += f'<text x="{self.mid_x}" y="{encoder_y_secondary_text}" font-size="{encoder_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.secondary_text}</text>'
+        if self.layer_a_secondary_text is not None:
+            memo += f'<text x="{self.mid_x}" y="{encoder_y_secondary_text}" font-size="{encoder_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a_secondary_text}</text>'
 
         return memo

@@ -12,5 +12,5 @@ if mydocs_path is None:
     ctypes.windll.shell32.SHGetFolderPathW(None, CSIDL_PERSONAL, None, SHGFP_TYPE_CURRENT, buf)
     mydocs_path = Path(buf.value)
 
-data_path = Path(mydocs_path, 'xrite-template-maker')
+data_path = Path(mydocs_path, 'xtouch-template-maker')
 output_path = Path(data_path, 'out')

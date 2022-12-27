@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
@@ -20,7 +20,11 @@ logger = get_logger()
 class Config:
     inkscape_path: Path
     xtouch_mini_fs2020_path: Path
+    xtouch_mini_fs2020_aircraft_path: Path = field(init=False)
     schema_version = SCHEMA_VERSION
+
+    def __post_init__(self):
+        self.xtouch_mini_fs2020_aircraft_path = Path(self.xtouch_mini_fs2020_path, 'Configurations')
 
     @classmethod
     def locate_file(cls, filename) -> Optional[Path]:
@@ -49,7 +53,7 @@ class Config:
 
         memo = cls(
             inkscape_path,
-            xtouch_mini_fs2020_path
+            xtouch_mini_fs2020_path.parent
         )
 
         memo.save()

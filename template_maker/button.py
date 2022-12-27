@@ -15,7 +15,7 @@ button_font_size = 16
 @dataclass
 class Button:
     index: int
-    text: Optional[str] = None
+    layer_a_text: Optional[str] = None
 
     def __post_init__(self):
         if self.index < 1 or self.index > 16:
@@ -41,8 +41,8 @@ class Button:
     def emit_text(self) -> str:
         memo = ""
 
-        if self.text is not None:
-            memo += f'<text x="{self.mid_x}" y="{self.text_y}" font-size="{button_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.text}</text>'
+        if self.layer_a_text is not None:
+            memo += f'<text x="{self.mid_x}" y="{self.text_y}" font-size="{button_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a_text}</text>'
 
         return memo
 
