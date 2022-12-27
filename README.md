@@ -11,13 +11,13 @@ This allows you to rapidly experiment with and change your bindings.
 1. [X-Touch Mini FS2020](https://github.com/maartentamboer/X-Touch-Mini-FS2020)
 2. Python3.9+
 
+Enable [long path support](https://www.thewindowsclub.com/how-to-enable-or-disable-win32-long-paths-in-windows-11-10) if you haven't already done that as part of the python install.
+
 Create and activate a virtual environment:
 
 ```
 python -m venv venv
-cd venv\Scripts
-activate
-cd ../../
+venv\Scripts\activate
 ```
 
 Install dependencies:
@@ -29,7 +29,7 @@ pip install -r requirements.txt
 Run:
 
 ```
-python run.py <path_to_your_config>
+python -m template_maker.main <path_to_your_config>
 ```
 
 ## Inspiration
