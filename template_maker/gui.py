@@ -2,8 +2,20 @@ from pathlib import Path
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog as fd
-from tkinter.messagebox import showinfo, showerror
+from tkinter.messagebox import showerror
 from typing import Optional, Union
+
+def make_preview_app(image_file_path: Path) -> tk.Tk:
+    # TODO: when there's time make this functional
+    class App(tk.Tk):
+        def __init__(self):
+            super().__init__()
+            self.title('Template preview')
+            self.geometry('320x150')
+
+            self.python_image = tk.PhotoImage(file=image_file_path)
+            ttk.Label(self, image=self.python_image).pack()
+    return App
 
 def do_error_box(title: str, message: str):
     showerror(title, message)

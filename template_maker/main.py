@@ -24,11 +24,7 @@ def create_parser():
     parser.add_argument('--watch', "-w", action='store_true', help="Display generated file an window and reload if aircraft config or string mapping changes")    
     return parser
 
-def run(template_info: TemplateInfo):
-    fn = f"{int(time.time())}"
-    dest_svg = Path(output_path, f"{fn}.svg")
-    dest_png = Path(output_path, f"{fn}.png")
-
+def run(template_info: TemplateInfo, dest_svg: Path, dest_png: Path):
     svgstr = generate_svgstr(template_info.buttons, template_info.encoders)
     logger.info(f"Writing {dest_svg}")
 
@@ -69,4 +65,13 @@ if __name__ == "__main__":
             msg = "\n".join(template_info.error_msgs)
             gui.do_error_box("Error parsing aircraft config", msg)
 
-    run(template_info)
+    fn = f"{int(time.time())}"
+    dest_svg = Path(output_path, f"{fn}.svg")
+    dest_png = Path(output_path, f"{fn}.png")
+
+    run(template_info, dest_svg, dest_png)
+
+    # TODO: enable when preview app is functional
+    # if gui_mode:
+    #     app = gui.make_preview_app(dest_png)()
+    #     app.mainloop()
