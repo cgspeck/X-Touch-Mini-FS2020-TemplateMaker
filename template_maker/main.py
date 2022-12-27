@@ -1,17 +1,19 @@
 from pathlib import Path
+import time
+
 from template_maker.button import Button
 from template_maker.config import Config
 from template_maker.encoder import Encoder
 from template_maker.generator import generate_svgstr, svg_to_png
 from template_maker.logger import setup_logger
+from template_maker.vars import output_path
 
 logger = setup_logger()
 config = Config.load()
 
-
-fn = "test"
-dest_svg = Path("out", f"{fn}.svg")
-dest_png = Path(Path.cwd(), "out", f"{fn}.png")
+fn = f"{int(time.time())}"
+dest_svg = Path(output_path, f"{fn}.svg")
+dest_png = Path(output_path, f"{fn}.png")
 
 encoders = [
     Encoder(1, "1", "1SecFN"),
@@ -45,6 +47,10 @@ buttons = [
 
 svgstr = generate_svgstr(buttons, encoders)
 logger.info(f"Writing {dest_svg}")
+
+if not output_path.exists():
+    output_path.mkdir()
+
 Path(dest_svg).write_text(svgstr)
 
 logger.info(f"Writing {dest_png}")

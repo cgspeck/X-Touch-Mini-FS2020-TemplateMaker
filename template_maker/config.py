@@ -8,10 +8,10 @@ from typing import Optional
 
 from template_maker.errors import PrerequsitesNotFoundException
 from template_maker.logger import get_logger
+from template_maker.vars import data_path
 
 SCHEMA_VERSION = 0
-CONFIG_DIR = Path(Path.home(), "x-touch-mini-fs2020-template-maker")
-CONFIG_FILE = Path(CONFIG_DIR, "config.json")
+CONFIG_FILE = Path(data_path, "config.json")
 
 logger = get_logger()
 
@@ -69,9 +69,9 @@ class Config:
         return cls.create()
 
     def save(self):
-        if not CONFIG_DIR.exists():
-            logger.info(f"Creating directory '{CONFIG_DIR}'")
-            CONFIG_DIR.mkdir()
+        if not data_path.exists():
+            logger.info(f"Creating directory '{data_path}'")
+            data_path.mkdir()
 
         memo = {
             'inkscape_path': str(self.inkscape_path),
@@ -79,4 +79,4 @@ class Config:
             'schema_version': self.schema_version
         }
         logger.info(f"Writing '{CONFIG_FILE}'")
-        CONFIG_FILE.write_text(json.dumps(memo))
+        CONFIG_FILE.write_text(json.dumps(memo, sort_keys=True, indent=2))

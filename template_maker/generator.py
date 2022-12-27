@@ -58,5 +58,5 @@ def svg_to_png(svgstr: str, filename: Path, inkscape_path: Path) -> None:
     finally:
         os.unlink(tf.name)
 
-    if e is not None:
-        raise e
+    if err is not None:
+        raise err
