@@ -152,6 +152,7 @@ Path(dest_svg).write_text(memo)
 # FIXME: the png is missing the transparent cutouts
 #        see if there are any switches or change to Inkscape?
 #
+# "C:\Program Files\Inkscape\bin\inkscape.exe" --export-filename "foo.png" test.svg
 print(f"Writing {dest_png}")
 drawing = svg2rlg(dest_svg, resolve_entities=True)
 renderPM.drawToFile(drawing, dest_png, fmt="PNG")
