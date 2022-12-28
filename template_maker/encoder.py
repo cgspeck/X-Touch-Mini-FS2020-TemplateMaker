@@ -1,8 +1,9 @@
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import List, Optional
 
 from template_maker import vars
+from template_maker.text_mapping import TextMapping
 
 encoder_x_origin = 45
 encoder_x_dist = 122.5
@@ -24,6 +25,18 @@ class Encoder:
             raise ValueError(f"Expected index in range 1 - 8, got {self.index}")
 
         self.mid_x = encoder_x_origin + encoder_rad + (self.index - 1) * encoder_x_dist
+
+    def apply_mappings(self, mappings: List[TextMapping]) -> None:
+        # layer_a_primary_text
+        for m in mappings:
+            if m.pat.search(self.layer_a_primary_text):
+                self.layer_a_primary_text = m.replacement
+                break
+        # layer_a_secondary_text
+        for m in mappings:
+            if m.pat.search(self.layer_a_secondary_text):
+                self.layer_a_secondary_text = m.replacement
+                break
 
     def emit_mask(self) -> str:
         return f'<circle cx="{self.mid_x}" cy="{encoder_y_origin + encoder_rad}" r="{encoder_rad}" fill="black" />\n'

@@ -4,7 +4,7 @@ import json
 from typing import Any, List, Mapping, Optional, Union
 
 from template_maker.button import Button
-from template_maker.data_defs import TemplateInfo
+from template_maker.template_info import TemplateInfo
 from template_maker.encoder import Encoder
 
 def parse_event_press(blk: Optional[Union[str, List[str], Mapping[str, Any]]]) -> Optional[str]:

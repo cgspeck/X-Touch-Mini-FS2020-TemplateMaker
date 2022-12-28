@@ -1,8 +1,9 @@
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import List, Optional
 
 from template_maker import vars
+from template_maker.text_mapping import TextMapping
 
 button_dim = [47.2, 35.4]
 button_x_origin = 69.85
@@ -34,6 +35,12 @@ class Button:
             self.y = self.y + button_y_dist
 
         self.text_y = self.y + button_dim[1] + 18
+
+    def apply_mappings(self, mappings: List[TextMapping]) -> None:
+        for m in mappings:
+            if m.pat.search(self.layer_a_text):
+                self.layer_a_text = m.replacement
+                break
 
     def emit_mask(self) -> str:
         return f'<rect x="{self.x}" y="{self.y}" width="{button_dim[0]}" height="{button_dim[1]}" fill="black" />\n'

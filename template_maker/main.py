@@ -2,18 +2,22 @@ import argparse
 import sys
 import time
 from pathlib import Path
+from typing import List
 
 from template_maker import aircraft_config, gui
 from template_maker.button import Button
 from template_maker.config import Config
-from template_maker.data_defs import TemplateInfo
+
 from template_maker.encoder import Encoder
 from template_maker.generator import generate_svgstr, svg_to_png
 from template_maker.logger import setup_logger
+from template_maker.template_info import TemplateInfo
+from template_maker.text_mapping import TextMapping
 from template_maker.vars import output_path
 
 logger = setup_logger()
 config = Config.load()
+
 
 def create_parser():
     parser = argparse.ArgumentParser(
@@ -56,6 +60,8 @@ if __name__ == "__main__":
         gui_mode = True
 
     template_info = aircraft_config.parse_aircraft_config(ac_config)
+
+    template_info.apply_template_mappings([])
 
     if len(template_info.error_msgs) > 0:
         for m in template_info.error_msgs:
