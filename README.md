@@ -32,6 +32,14 @@ Run:
 python -m template_maker.main --config c:\bin\X-Touch-Mini-FS2020\Configurations\config_longitude.json --preview
 ```
 
+If you run it without the config flag then a file open dialog will be displayed to allow you to select an aircraft configuration.
+
+Alternative, you can use the `run.bat` to start the app, after you've set up the virtual environment and installed dependencies as above:
+
+```
+run
+```
+
 ## Current limitations
 
 - only processes values for layer a (since this is all I use)

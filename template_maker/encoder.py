@@ -22,6 +22,7 @@ class Encoder:
     index: int
     layer_a_primary_text: Optional[str] = None
     layer_a_secondary_text: Optional[str] = None
+    layer_a_tertiary_text: Optional[str] = None
 
     def __post_init__(self):
         if self.index < 1 or self.index > 8:
@@ -43,6 +44,12 @@ class Encoder:
                     self.layer_a_secondary_text = m.replacement
                     break
 
+        if self.layer_a_tertiary_text is not None:
+            for m in mappings:
+                if m.pat.search(self.layer_a_tertiary_text):
+                    self.layer_a_tertiary_text = m.replacement
+                    break
+
     def emit_mask(self) -> str:
         return f'<circle cx="{self.mid_x}" cy="{encoder_y_origin + encoder_rad}" r="{encoder_rad}" fill="black" />\n'
 
@@ -52,7 +59,11 @@ class Encoder:
         if self.layer_a_primary_text is not None:
             memo += f'<text x="{self.mid_x}" y="{encoder_y_primary_text}" font-size="{encoder_primary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a_primary_text}</text>'
 
-        if self.layer_a_secondary_text is not None:
+        if self.layer_a_secondary_text is not None and self.layer_a_tertiary_text is not None:
+            memo += f'<text x="{self.mid_x}" y="{encoder_y_secondary_text}" font-size="{encoder_secondary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a_secondary_text} ({self.layer_a_tertiary_text})</text>'
+        elif self.layer_a_secondary_text is not None:
             memo += f'<text x="{self.mid_x}" y="{encoder_y_secondary_text}" font-size="{encoder_secondary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a_secondary_text}</text>'
+        elif self.layer_a_tertiary_text is not None:
+            memo += f'<text x="{self.mid_x}" y="{encoder_y_secondary_text}" font-size="{encoder_secondary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a_tertiary_text}</text>'
 
         return memo

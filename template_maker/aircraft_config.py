@@ -56,10 +56,10 @@ def parse_aircraft_config(filepath: Path) -> TemplateInfo:
     try:
         txt = filepath.read_text()
         dct = json.loads(txt)
-    except OSError as err:
-        error_msgs.append(f"Unable to open file '{filepath}'\n\n'{err}'")
     except FileNotFoundError:
         error_msgs.append(f"Unable to open file '{filepath}'")
+    except OSError as err:
+        error_msgs.append(f"Unable to open file '{filepath}'\n\n'{err}'")
     except (UnicodeDecodeError, json.JSONDecodeError):
         error_msgs.append(f"Invalid json file '{filepath}'")
     
@@ -74,8 +74,14 @@ def parse_aircraft_config(filepath: Path) -> TemplateInfo:
                 primary_text = parse_event_press(encoder_blk.get('event_up', None))
                 secondary_text = parse_event_press(encoder_blk.get('event_press', None))
 
+                if secondary_text is None:
+                    secondary_text = parse_event_press(encoder_blk.get('event_short_press', None))
+
+                tertiary_text = parse_event_press(encoder_blk.get('event_long_press', None))
+
                 encoders[list_index].layer_a_primary_text = primary_text
                 encoders[list_index].layer_a_secondary_text = secondary_text
+                encoders[list_index].layer_a_tertiary_text = tertiary_text
         else:
             error_msgs.append('"encoders" key not found')
 
