@@ -27,16 +27,18 @@ class Encoder:
         self.mid_x = encoder_x_origin + encoder_rad + (self.index - 1) * encoder_x_dist
 
     def apply_mappings(self, mappings: List[TextMapping]) -> None:
-        # layer_a_primary_text
-        for m in mappings:
-            if m.pat.search(self.layer_a_primary_text):
-                self.layer_a_primary_text = m.replacement
-                break
-        # layer_a_secondary_text
-        for m in mappings:
-            if m.pat.search(self.layer_a_secondary_text):
-                self.layer_a_secondary_text = m.replacement
-                break
+        if self.layer_a_primary_text is not None:
+            print(self.layer_a_primary_text)
+            for m in mappings:
+                if m.pat.search(self.layer_a_primary_text):
+                    self.layer_a_primary_text = m.replacement
+                    break
+
+        if self.layer_a_secondary_text is not None:
+            for m in mappings:
+                if m.pat.search(self.layer_a_secondary_text):
+                    self.layer_a_secondary_text = m.replacement
+                    break
 
     def emit_mask(self) -> str:
         return f'<circle cx="{self.mid_x}" cy="{encoder_y_origin + encoder_rad}" r="{encoder_rad}" fill="black" />\n'

@@ -69,7 +69,7 @@ def parse_aircraft_config(filepath: Path) -> TemplateInfo:
                     continue
 
                 list_index = encoder_index - 1
-                primary_text = encoder_blk.get('event_up', None)
+                primary_text = parse_event_press(encoder_blk.get('event_up', None))
                 secondary_text = parse_event_press(encoder_blk.get('event_press', None))
 
                 encoders[list_index].layer_a_primary_text = primary_text

@@ -37,6 +37,9 @@ class Button:
         self.text_y = self.y + button_dim[1] + 18
 
     def apply_mappings(self, mappings: List[TextMapping]) -> None:
+        if self.layer_a_text is None:
+            return
+
         for m in mappings:
             if m.pat.search(self.layer_a_text):
                 self.layer_a_text = m.replacement

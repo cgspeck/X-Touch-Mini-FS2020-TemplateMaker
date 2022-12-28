@@ -1,0 +1,3 @@
+AP_SPD_VAR_.* = SPEED
+# line below will blank out unrecognised values!
+# .* = 

@@ -73,10 +73,6 @@ class Config:
         return cls.create()
 
     def save(self):
-        if not data_path.exists():
-            logger.info(f"Creating directory '{data_path}'")
-            data_path.mkdir()
-
         memo = {
             'inkscape_path': str(self.inkscape_path),
             'xtouch_mini_fs2020_path': str(self.xtouch_mini_fs2020_path),

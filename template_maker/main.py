@@ -12,7 +12,7 @@ from template_maker.encoder import Encoder
 from template_maker.generator import generate_svgstr, svg_to_png
 from template_maker.logger import setup_logger
 from template_maker.template_info import TemplateInfo
-from template_maker.text_mapping import TextMapping
+from template_maker.text_mapping import TextMapping, load_mappings
 from template_maker.vars import output_path
 
 logger = setup_logger()
@@ -33,7 +33,7 @@ def run(template_info: TemplateInfo, dest_svg: Path, dest_png: Path):
     logger.info(f"Writing {dest_svg}")
 
     if not output_path.exists():
-        output_path.mkdir()
+        output_path.mkdir(parents=True)
 
     Path(dest_svg).write_text(svgstr)
 
@@ -60,8 +60,9 @@ if __name__ == "__main__":
         gui_mode = True
 
     template_info = aircraft_config.parse_aircraft_config(ac_config)
+    mappings = load_mappings()
 
-    template_info.apply_template_mappings([])
+    template_info.apply_template_mappings(mappings)
 
     if len(template_info.error_msgs) > 0:
         for m in template_info.error_msgs:
