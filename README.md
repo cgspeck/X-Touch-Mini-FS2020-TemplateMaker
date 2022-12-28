@@ -1,8 +1,8 @@
 # X-Touch Mini FS2020 Template Maker
 
-Utility to turn your [X-Touch Mini FS2020](https://github.com/maartentamboer/X-Touch-Mini-FS2020) configs into SVGs.
+Utility to turn your [X-Touch Mini FS2020](https://github.com/maartentamboer/X-Touch-Mini-FS2020) configs into SVGs and PNGs.
 
-The SVGs have transparent regions and can be used with commercial paper desktop CNCs such as the Cricut (Print & Cut) to quickly generate templates.
+The PNGs have transparent regions and can be used with paper desktop CNCs such as the Cricut (Print & Cut) to quickly generate paper templates.
 
 This allows you to rapidly experiment with and change your bindings.
 
@@ -29,7 +29,7 @@ pip install -r requirements.txt
 Run:
 
 ```
-python -m template_maker.main --config c:\bin\X-Touch-Mini-FS2020\Configurations\config_longitude.bak.json --preview
+python -m template_maker.main --config c:\bin\X-Touch-Mini-FS2020\Configurations\config_longitude.json --preview
 ```
 
 ## Current limitations
