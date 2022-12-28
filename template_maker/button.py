@@ -7,7 +7,7 @@ from template_maker.text_mapping import TextMapping
 
 # in mm
 button_dim = [13, 10]
-button_x_origin = 12.2
+button_x_origin = 9.5
 button_x_dist = 31.2
 button_y_origin = 47.6
 button_y_dist = 20.2
