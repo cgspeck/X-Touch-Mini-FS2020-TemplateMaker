@@ -71,7 +71,6 @@ if __name__ == "__main__":
 
     run(template_info, dest_svg, dest_png)
 
-    # TODO: enable when preview app is functional
-    # if gui_mode:
-    #     app = gui.make_preview_app(dest_png)()
-    #     app.mainloop()
+    if gui_mode:
+        app = gui.make_preview_app(dest_png)()
+        app.mainloop()
