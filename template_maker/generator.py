@@ -10,7 +10,8 @@ from template_maker.logger import get_logger
 
 logger = get_logger()
 
-base_dim = [1024, 370]
+# reference height is mm
+base_dim = [248.5, 87]
 
 def generate_svgstr(buttons: List[Button], encoders: List[Encoder]) -> str:
     memo = f'<svg version="1.1" width="{base_dim[0]}" height="{base_dim[1]}" xmlns="http://www.w3.org/2000/svg">\n'
@@ -44,6 +45,8 @@ def svg_to_png(svgstr: str, filename: Path, inkscape_path: Path) -> None:
     tf.close()
     args = [
         str(inkscape_path),
+        '-w',
+        '2086',
         '--export-filename',
         f'{filename}',
         f'{tf.name}'

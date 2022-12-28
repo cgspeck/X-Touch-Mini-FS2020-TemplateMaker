@@ -29,7 +29,7 @@ pip install -r requirements.txt
 Run:
 
 ```
-python -m template_maker.main <path_to_your_config>
+python -m template_maker.main --config c:\bin\X-Touch-Mini-FS2020\Configurations\config_longitude.bak.json --preview
 ```
 
 ## Current limitations

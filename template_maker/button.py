@@ -5,12 +5,14 @@ from typing import List, Optional
 from template_maker import vars
 from template_maker.text_mapping import TextMapping
 
-button_dim = [47.2, 35.4]
-button_x_origin = 69.85
-button_x_dist = 122.5
-button_y_origin = 186
-button_y_dist = 87
-button_font_size = 16
+# in mm
+button_dim = [13, 10]
+button_x_origin = 12.2
+button_x_dist = 31.2
+button_y_origin = 47.6
+button_y_dist = 20.2
+label_y_gap = 5
+button_font_size = 5
 
 
 @dataclass
@@ -34,7 +36,7 @@ class Button:
         if self.index > 8:
             self.y = self.y + button_y_dist
 
-        self.text_y = self.y + button_dim[1] + 18
+        self.text_y = self.y + button_dim[1] + label_y_gap
 
     def apply_mappings(self, mappings: List[TextMapping]) -> None:
         if self.layer_a_text is None:

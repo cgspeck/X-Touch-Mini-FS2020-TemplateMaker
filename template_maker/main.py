@@ -25,7 +25,8 @@ def create_parser():
         description="Generates svg and png templates from given aircraft configuration",
     )
     parser.add_argument('--config', '-c', help="Path to aircraft config, if omitted then a file chooser will launch")
-    parser.add_argument('--watch', "-w", action='store_true', help="Display generated file an window and reload if aircraft config or string mapping changes")    
+    parser.add_argument('--watch', "-w", action='store_true', help="Display generated file an window and reload if aircraft config or string mapping changes")
+    parser.add_argument('--preview', "-p", action='store_true', help="Force a preview window to appear")
     return parser
 
 def run(template_info: TemplateInfo, dest_svg: Path, dest_png: Path):
@@ -44,6 +45,7 @@ if __name__ == "__main__":
     parser = create_parser()
     args = parser.parse_args()
     gui_mode = False
+    ac_config = None
 
     if args.config is None:
         gui_mode = True
@@ -61,6 +63,7 @@ if __name__ == "__main__":
 
     mappings = load_mappings(config.remove_unrecognized)
 
+    logger.info(f"Loading '{ac_config}'")
     template_info = aircraft_config.parse_aircraft_config(ac_config)
     template_info.apply_template_mappings(mappings)
 
@@ -78,6 +81,6 @@ if __name__ == "__main__":
 
     run(template_info, dest_svg, dest_png)
 
-    if gui_mode:
+    if gui_mode or args.preview:
         app = gui.make_preview_app(dest_png)()
         app.mainloop()

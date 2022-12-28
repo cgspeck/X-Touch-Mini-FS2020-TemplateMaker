@@ -56,6 +56,8 @@ def parse_aircraft_config(filepath: Path) -> TemplateInfo:
     try:
         txt = filepath.read_text()
         dct = json.loads(txt)
+    except OSError as err:
+        error_msgs.append(f"Unable to open file '{filepath}'\n\n'{err}'")
     except FileNotFoundError:
         error_msgs.append(f"Unable to open file '{filepath}'")
     except (UnicodeDecodeError, json.JSONDecodeError):

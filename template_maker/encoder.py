@@ -5,14 +5,16 @@ from typing import List, Optional
 from template_maker import vars
 from template_maker.text_mapping import TextMapping
 
-encoder_x_origin = 45
-encoder_x_dist = 122.5
-encoder_y_origin = 45
-encoder_y_primary_text = 30
-encoder_y_secondary_text = 170
-encoder_rad = 47.2
-encoder_primary_font_size = 26
-encoder_secondary_font_size = 16
+# reference height is mm
+encoder_x_origin = 4
+encoder_x_dist = 31.2
+encoder_y_origin = 10.7
+encoder_dia = 25
+encoder_rad = encoder_dia/2
+encoder_y_primary_text = 9
+encoder_y_secondary_text = encoder_y_origin + encoder_dia + 6
+encoder_primary_font_size = 7
+encoder_secondary_font_size = 5
 
 
 @dataclass
