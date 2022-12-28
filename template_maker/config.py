@@ -20,6 +20,7 @@ logger = get_logger()
 class Config:
     inkscape_path: Path
     xtouch_mini_fs2020_path: Path
+    remove_unrecognized: bool
     xtouch_mini_fs2020_aircraft_path: Path = field(init=False)
     schema_version = SCHEMA_VERSION
 
@@ -76,6 +77,7 @@ class Config:
         memo = {
             'inkscape_path': str(self.inkscape_path),
             'xtouch_mini_fs2020_path': str(self.xtouch_mini_fs2020_path),
+            'remove_unrecognized': self.remove_unrecognized,
             'schema_version': self.schema_version
         }
         logger.info(f"Writing '{CONFIG_FILE}'")

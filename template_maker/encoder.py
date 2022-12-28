@@ -11,7 +11,8 @@ encoder_y_origin = 45
 encoder_y_primary_text = 30
 encoder_y_secondary_text = 170
 encoder_rad = 47.2
-encoder_font_size = 26
+encoder_primary_font_size = 26
+encoder_secondary_font_size = 16
 
 
 @dataclass
@@ -47,9 +48,9 @@ class Encoder:
         memo = ""
 
         if self.layer_a_primary_text is not None:
-            memo += f'<text x="{self.mid_x}" y="{encoder_y_primary_text}" font-size="{encoder_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a_primary_text}</text>'
+            memo += f'<text x="{self.mid_x}" y="{encoder_y_primary_text}" font-size="{encoder_primary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a_primary_text}</text>'
 
         if self.layer_a_secondary_text is not None:
-            memo += f'<text x="{self.mid_x}" y="{encoder_y_secondary_text}" font-size="{encoder_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a_secondary_text}</text>'
+            memo += f'<text x="{self.mid_x}" y="{encoder_y_secondary_text}" font-size="{encoder_secondary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a_secondary_text}</text>'
 
         return memo

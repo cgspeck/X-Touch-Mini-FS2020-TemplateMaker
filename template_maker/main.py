@@ -59,9 +59,9 @@ if __name__ == "__main__":
     if args.watch:
         gui_mode = True
 
-    template_info = aircraft_config.parse_aircraft_config(ac_config)
-    mappings = load_mappings()
+    mappings = load_mappings(config.remove_unrecognized)
 
+    template_info = aircraft_config.parse_aircraft_config(ac_config)
     template_info.apply_template_mappings(mappings)
 
     if len(template_info.error_msgs) > 0:
