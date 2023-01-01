@@ -14,6 +14,7 @@ from template_maker.generator import PNG_DIM
 from template_maker.logger import get_logger
 from template_maker.template_info import TemplateInfo
 from template_maker import vars
+from template_maker.gui_label_mapping_editor import LabelMappingEditor
 
 logger = get_logger()
 GUI_MODE = True
@@ -57,7 +58,7 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
             self.editmenu = tk.Menu(self.menubar, tearoff=False)
             self.editmenu.add_command(
                 label="Manage label mappings...",
-                command=noop,
+                command=self.show_label_mapping_editor,
             )
             self.editmenu.add_command(
                 label="Settings...",
@@ -118,8 +119,13 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
             if choice == "no":
                 return
 
-            # TODO: show modal dialog with unmapped labels
-            self.reload()
+            self.show_label_mapping_editor()
+
+        def show_label_mapping_editor(self):
+            LabelMappingEditor(self, self.save_mappings_and_reload)
+
+        def save_mappings_and_reload(self):
+            print("save_mappings_and_reload")
 
         def load_image(self, image_file_path: Path):
             if self.loaded_image_file_path is not None:
