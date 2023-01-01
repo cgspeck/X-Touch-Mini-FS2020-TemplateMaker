@@ -41,7 +41,7 @@ def create_parser():
     return parser
 
 
-def run(template_info: TemplateInfo, dest_svg: Path, dest_png: Path):
+def run_generator(template_info: TemplateInfo, dest_svg: Path, dest_png: Path):
     svgstr = generate_svgstr(template_info.buttons, template_info.encoders)
     logger.info(f"Writing {dest_svg}")
 
@@ -52,6 +52,33 @@ def run(template_info: TemplateInfo, dest_svg: Path, dest_png: Path):
 
     logger.info(f"Writing {dest_png}")
     svg_to_png(svgstr, dest_png, config.inkscape_path)
+
+
+def load_mappings_and_run(logger, config, run, gui_mode, ac_config):
+    mappings = load_mappings(config.remove_unrecognized)
+    logger.info(f"Loading '{ac_config}'")
+    template_info = parse_ac_config_and_apply_mappings(ac_config, mappings)
+
+    if len(template_info.error_msgs) > 0:
+        for m in template_info.error_msgs:
+            logger.error(m)
+
+        if gui_mode:
+            msg = "\n".join(template_info.error_msgs)
+            gui.do_error_box("Error parsing aircraft config", msg)
+
+    fn = f"{int(time.time())}"
+    dest_svg = Path(output_path, f"{fn}.svg")
+    dest_png = Path(output_path, f"{fn}.png")
+
+    run(template_info, dest_svg, dest_png)
+    return dest_png
+
+
+def parse_ac_config_and_apply_mappings(ac_config, mappings):
+    template_info = aircraft_config.parse_aircraft_config(ac_config)
+    template_info.apply_template_mappings(mappings)
+    return template_info
 
 
 if __name__ == "__main__":
@@ -74,26 +101,8 @@ if __name__ == "__main__":
     if args.watch:
         gui_mode = True
 
-    mappings = load_mappings(config.remove_unrecognized)
-
-    logger.info(f"Loading '{ac_config}'")
-    template_info = aircraft_config.parse_aircraft_config(ac_config)
-    template_info.apply_template_mappings(mappings)
-
-    if len(template_info.error_msgs) > 0:
-        for m in template_info.error_msgs:
-            logger.error(m)
-
-        if gui_mode:
-            msg = "\n".join(template_info.error_msgs)
-            gui.do_error_box("Error parsing aircraft config", msg)
-
-    fn = f"{int(time.time())}"
-    dest_svg = Path(output_path, f"{fn}.svg")
-    dest_png = Path(output_path, f"{fn}.png")
-
-    run(template_info, dest_svg, dest_png)
+    dest_png = load_mappings_and_run(logger, config, run_generator, gui_mode, ac_config)
 
     if gui_mode or args.preview:
-        app = gui.make_preview_app(dest_png)()
+        app = gui.make_preview_app(config, dest_png)()
         app.mainloop()
