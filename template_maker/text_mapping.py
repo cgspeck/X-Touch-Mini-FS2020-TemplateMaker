@@ -15,6 +15,7 @@ class TextMapping(DataClassJsonMixin):
     pat: Pattern
     replacement: str
     replacement_unsanitized: str
+    in_use: bool
 
 
 def sanitise_replacement(original: str) -> str:
@@ -41,6 +42,7 @@ def _from_disk(fp: Path) -> List[TextMapping]:
                 pat=re.compile(k),
                 replacement=sanitise_replacement(v),
                 replacement_unsanitized=v,
+                in_use=False,
             )
         )
     return memo

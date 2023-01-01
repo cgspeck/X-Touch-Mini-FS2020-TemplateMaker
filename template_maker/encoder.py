@@ -4,7 +4,7 @@ from typing import List, Optional
 from dataclasses_json import DataClassJsonMixin
 
 from template_maker import vars
-from template_maker.label import Label
+from template_maker.label import Label, gather_unmapped_label
 from template_maker.text_mapping import TextMapping
 
 # reference height is mm
@@ -73,4 +73,11 @@ class Encoder(DataClassJsonMixin):
 
         memo += self._emit_secondary_tertiary_text()
 
+        return memo
+
+    def gather_unmapped_labels(self) -> List[Label]:
+        memo = []
+        memo.extend(gather_unmapped_label(self, "layer_a_primary_text"))
+        memo.extend(gather_unmapped_label(self, "layer_a_secondary_text"))
+        memo.extend(gather_unmapped_label(self, "layer_a_tertiary_text"))
         return memo

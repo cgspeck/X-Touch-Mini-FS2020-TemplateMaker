@@ -277,6 +277,7 @@
   ],
   "filepath": "tests\\data\\config_generic_ap.json",
   "error_msgs": [],
+  "dest_svg": null,
   "dest_png": null,
-  "dest_svg": null
+  "_unmapped_labels": null
 }

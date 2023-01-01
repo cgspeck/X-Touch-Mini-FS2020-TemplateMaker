@@ -1,9 +1,8 @@
 import shutil
-import time
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog as fd
-from tkinter.messagebox import showerror
+from tkinter import messagebox
 from typing import Optional, Union
 
 from PIL import Image, ImageTk
@@ -53,8 +52,19 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
                 label="Save SVG...", command=self.save_svg, state="disabled"
             )
             self.filemenu.add_command(label="Exit", command=self.quit)
-
             self.menubar.add_cascade(label="File", menu=self.filemenu)
+
+            self.editmenu = tk.Menu(self.menubar, tearoff=False)
+            self.editmenu.add_command(
+                label="Manage label mappings...",
+                command=noop,
+            )
+            self.editmenu.add_command(
+                label="Settings...",
+                command=noop,
+            )
+            self.menubar.add_cascade(label="Edit", menu=self.editmenu)
+
             self.config(menu=self.menubar)
 
             self.loaded_image_file_path: Optional[Path] = None
@@ -65,6 +75,7 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
             if template_info is not None:
                 self.current_template_info = template_info
                 self.load_image(template_info.dest_png)
+                self.check_for_unmapped_labels()
 
         def enable_template_loaded_menus(self):
             self.filemenu.entryconfig("Reload", state="normal")
@@ -89,6 +100,26 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
             )
             self.current_template_info = template_info
             self.load_image(template_info.dest_png)
+
+            self.check_for_unmapped_labels()
+
+        def check_for_unmapped_labels(self):
+            unmapped_labels = self.current_template_info.gather_unmapped_labels()
+
+            if len(unmapped_labels) == 0:
+                return
+
+            message = f"{len(unmapped_labels)} umapped labels were detected,\nwould you like to define them now?"
+            choice = messagebox.askquestion(
+                title="Unmapped labels detected",
+                message=message,
+            )
+
+            if choice == "no":
+                return
+
+            # TODO: show modal dialog with unmapped labels
+            self.reload()
 
         def load_image(self, image_file_path: Path):
             if self.loaded_image_file_path is not None:
@@ -131,7 +162,7 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
 
 
 def do_error_box(title: str, message: str):
-    showerror(title, message)
+    messagebox.showerror(title, message)
 
 
 def select_aircraft_config(initial_dir: Union[str, Path]) -> Optional[Path]:

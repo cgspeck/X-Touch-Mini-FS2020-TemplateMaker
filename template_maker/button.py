@@ -4,7 +4,7 @@ from typing import List, Optional
 from dataclasses_json import DataClassJsonMixin
 
 from template_maker import vars
-from template_maker.label import Label
+from template_maker.label import Label, gather_unmapped_label
 from template_maker.text_mapping import TextMapping
 
 # in mm
@@ -56,3 +56,6 @@ class Button(DataClassJsonMixin):
             memo += f'<text x="{self.mid_x}" y="{self.text_y}" font-size="{button_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a_text.display or ""}</text>\n'
 
         return memo
+
+    def gather_unmapped_labels(self) -> List[Label]:
+        return gather_unmapped_label(self, "layer_a_text")
