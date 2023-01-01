@@ -12,7 +12,7 @@ from template_maker.encoder import Encoder
 from template_maker.generator import generate_svgstr, svg_to_png
 from template_maker.logger import setup_logger
 from template_maker.template_info import TemplateInfo
-from template_maker.text_mapping import TextMapping, load_mappings
+from template_maker.text_mapping import load_mappings
 from template_maker.vars import output_path
 
 logger = setup_logger()

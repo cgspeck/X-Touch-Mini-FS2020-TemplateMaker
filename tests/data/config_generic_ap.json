@@ -1,0 +1,217 @@
+{
+  "$schema": "./config.schema.json",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "encoders": [
+    {
+      "index": 1,
+      "event_up": "VOR1_OBI_INC",
+      "event_down": "VOR1_OBI_DEC",
+      "alternate_event_up": "VOR2_OBI_INC",
+      "alternate_event_down": "VOR2_OBI_DEC",
+      "event_short_press": "{alternate}"
+    },
+    {
+      "index": 2,
+      "event_up": {
+        "event": "HEADING_BUG_INC",
+        "type": "manual",
+        "value": 1
+      },
+      "event_down": {
+        "event": "HEADING_BUG_DEC",
+        "type": "manual",
+        "value": 1
+      },
+      "event_press": {
+        "event": "HEADING_BUG_SET",
+        "type": "manual",
+        "value": 1
+      }
+    },
+    {
+      "index": 3,
+      "event_up": {
+        "event": "AP_SPD_VAR_INC",
+        "type": "manual",
+        "value": 1
+      },
+      "event_down": {
+        "event": "AP_SPD_VAR_DEC",
+        "type": "manual",
+        "value": 1
+      }
+    },
+    {
+      "index": 4,
+      "event_up": {
+        "event": "AP_ALT_VAR_INC"
+      },
+      "event_down": {
+        "event": "AP_ALT_VAR_DEC"
+      }
+    },
+    {
+      "index": 5,
+      "event_up": {
+        "event": "AP_VS_VAR_INC"
+      },
+      "event_down": {
+        "event": "AP_VS_VAR_DEC"
+      },
+      "event_press": "AP_ATT_HOLD"
+    },
+    {
+      "index": 6,
+      "event_up": "KOHLSMAN_INC",
+      "event_down": "KOHLSMAN_DEC",
+      "event_press": "KOHLSMAN_SET"
+    },
+    {
+      "index": 7,
+      "event_up": "COM_RADIO_WHOLE_INC",
+      "event_down": "COM_RADIO_WHOLE_DEC",
+      "alternate_event_up": "COM_RADIO_FRACT_INC",
+      "alternate_event_down": "COM_RADIO_FRACT_DEC",
+      "event_short_press": "{alternate}",
+      "event_long_press": "COM_STBY_RADIO_SWAP"
+    },
+    {
+      "index": 8,
+      "event_up": "NAV1_RADIO_WHOLE_INC",
+      "event_down": "NAV1_RADIO_WHOLE_DEC",
+      "alternate_event_up": "NAV1_RADIO_FRACT_INC",
+      "alternate_event_down": "NAV1_RADIO_FRACT_DEC",
+      "event_short_press": "{alternate}",
+      "event_long_press": "NAV1_RADIO_SWAP"
+    }
+  ],
+  "buttons": [
+    {
+      "index": 1,
+      "event_press": "TOGGLE_FLIGHT_DIRECTOR",
+      "simvar_led": "AUTOPILOT_FLIGHT_DIRECTOR_ACTIVE"
+    },
+    {
+      "index": 2,
+      "event_press": "AP_HDG_HOLD",
+      "simvar_led": "AUTOPILOT_HEADING_LOCK"
+    },
+    {
+      "index": 3,
+      "event_press": "AP_AIRSPEED_HOLD",
+      "simvar_led": "AUTOPILOT_AIRSPEED_HOLD"
+    },
+    {
+      "index": 4,
+      "event_press": "AP_ALT_HOLD",
+      "simvar_led": "AUTOPILOT_ALTITUDE_LOCK"
+    },
+    {
+      "index": 5,
+      "event_press": "AP_VS_HOLD",
+      "simvar_led": "AUTOPILOT_VERTICAL_HOLD"
+    },
+    {
+      "index": 6,
+      "event_press": "AP_BC_HOLD",
+      "simvar_led": "AUTOPILOT_BACKCOURSE_HOLD"
+    },
+    {
+      "index": 7,
+      "event_press": "AUTO_THROTTLE_TO_GA",
+      "simvar_led": "AUTOPILOT_TAKEOFF_POWER_ACTIVE"
+    },
+    {
+      "index": 8
+    },
+    {
+      "index": 9,
+      "event_press": "AP_MASTER",
+      "simvar_led": "AUTOPILOT_MASTER"
+    },
+    {
+      "index": 10,
+      "event_press": "AP_NAV1_HOLD",
+      "simvar_led": "AUTOPILOT_NAV1_LOCK"
+    },
+    {
+      "index": 11,
+      "event_press": "AUTO_THROTTLE_ARM",
+      "simvar_led": "AUTOTHROTTLE_ACTIVE"
+    },
+    {
+      "index": 12,
+      "event_press": "FLIGHT_LEVEL_CHANGE",
+      "simvar_led": "AUTOPILOT_FLIGHT_LEVEL_CHANGE"
+    },
+    {
+      "index": 13,
+      "event_press": "AP_LOC_HOLD",
+      "simvar_led": "NAV_HAS_LOCALIZER"
+    },
+    {
+      "index": 14,
+      "event_press": "AP_APR_HOLD",
+      "simvar_led": "AUTOPILOT_APPROACH_HOLD"
+    },
+    {
+      "index": 15,
+      "event_press": "YAW_DAMPER_TOGGLE",
+      "simvar_led": "AUTOPILOT_YAW_DAMPER"
+    },
+    {
+      "index": 16
+    }
+  ],
+  "faders": [
+    {
+      "index": 1,
+      "event_change": "AXIS_MIXTURE_SET",
+      "min_value": -16384,
+      "max_value": 16384
+    }
+  ],
+  "triggers": [
+    {
+      "trigger_type": "condition-file",
+      "simvar": "AUTOPILOT_HEADING_LOCK_DIR",
+      "condition": "Functions/Generic/hdg-lock-sync.jinja2"
+    }
+  ],
+  "initialization": {
+    "global_variables": [
+      {
+        "name": "HEADING_ENC_IDX",
+        "value": 5
+      },
+      {
+        "name": "AP_SPD_ENC_IDX",
+        "value": 4
+      },
+      {
+        "name": "FLAPS_UP_BUT_IDX",
+        "value": 8
+      },
+      {
+        "name": "YD_BUT_IDX",
+        "value": 13
+      },
+      {
+        "name": "BATT_BUT_IDX",
+        "value": 14
+      },
+      {
+        "name": "GEAR_BUT_IDX",
+        "value": 15
+      },
+      {
+        "name": "FLAPS_DN_BUT_IDX",
+        "value": 16
+      }
+    ]
+  }
+}
