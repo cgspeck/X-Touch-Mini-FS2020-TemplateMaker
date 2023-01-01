@@ -24,10 +24,22 @@ def create_parser():
         prog="X-Touch Mini FS2020 Template Maker",
         description="Generates svg and png templates from given aircraft configuration",
     )
-    parser.add_argument('--config', '-c', help="Path to aircraft config, if omitted then a file chooser will launch")
-    parser.add_argument('--watch', "-w", action='store_true', help="Display generated file an window and reload if aircraft config or string mapping changes")
-    parser.add_argument('--preview', "-p", action='store_true', help="Force a preview window to appear")
+    parser.add_argument(
+        "--config",
+        "-c",
+        help="Path to aircraft config, if omitted then a file chooser will launch",
+    )
+    parser.add_argument(
+        "--watch",
+        "-w",
+        action="store_true",
+        help="Display generated file an window and reload if aircraft config or string mapping changes",
+    )
+    parser.add_argument(
+        "--preview", "-p", action="store_true", help="Force a preview window to appear"
+    )
     return parser
+
 
 def run(template_info: TemplateInfo, dest_svg: Path, dest_png: Path):
     svgstr = generate_svgstr(template_info.buttons, template_info.encoders)
@@ -41,6 +53,7 @@ def run(template_info: TemplateInfo, dest_svg: Path, dest_png: Path):
     logger.info(f"Writing {dest_png}")
     svg_to_png(svgstr, dest_png, config.inkscape_path)
 
+
 if __name__ == "__main__":
     parser = create_parser()
     args = parser.parse_args()
@@ -51,9 +64,9 @@ if __name__ == "__main__":
         gui_mode = True
         ac_config = gui.select_aircraft_config(config.xtouch_mini_fs2020_aircraft_path)
         if ac_config is None:
-            logger.info('No aircraft config selected')
+            logger.info("No aircraft config selected")
             sys.exit()
-        
+
         ac_config = Path(ac_config)
     else:
         ac_config = Path(args.config)

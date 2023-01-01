@@ -29,6 +29,10 @@ pip install -r requirements.txt
 Run:
 
 ```
+# opens config file selector
+python -m template_maker.main
+
+# alternatively, give it a path to a config
 python -m template_maker.main --config c:\bin\X-Touch-Mini-FS2020\Configurations\config_longitude.json --preview
 ```
 

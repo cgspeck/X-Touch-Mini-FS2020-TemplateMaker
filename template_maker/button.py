@@ -4,6 +4,7 @@ from typing import List, Optional
 from dataclasses_json import DataClassJsonMixin
 
 from template_maker import vars
+from template_maker.label import Label
 from template_maker.text_mapping import TextMapping
 
 # in mm
@@ -19,7 +20,7 @@ button_font_size = 5
 @dataclass
 class Button(DataClassJsonMixin):
     index: int
-    layer_a_text: Optional[str] = None
+    layer_a_text: Optional[Label] = None
 
     def __post_init__(self):
         if self.index < 1 or self.index > 16:
@@ -43,10 +44,7 @@ class Button(DataClassJsonMixin):
         if self.layer_a_text is None:
             return
 
-        for m in mappings:
-            if m.pat.search(self.layer_a_text):
-                self.layer_a_text = m.replacement
-                break
+        self.layer_a_text.apply_mappings(mappings)
 
     def emit_mask(self) -> str:
         return f'<rect x="{self.x}" y="{self.y}" width="{button_dim[0]}" height="{button_dim[1]}" fill="black" />\n'
@@ -55,6 +53,6 @@ class Button(DataClassJsonMixin):
         memo = ""
 
         if self.layer_a_text is not None:
-            memo += f'<text x="{self.mid_x}" y="{self.text_y}" font-size="{button_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a_text}</text>'
+            memo += f'<text x="{self.mid_x}" y="{self.text_y}" font-size="{button_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a_text.display or ""}</text>\n'
 
         return memo

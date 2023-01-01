@@ -12,4 +12,6 @@ def config_generic_ap() -> str:
 
 
 def test_parse_generic_ap(config_generic_ap: str, snapshot: SnapshotFixture) -> None:
-    assert snapshot("json") == parse_aircraft_config(config_generic_ap).to_dict()
+    actual = parse_aircraft_config(config_generic_ap).to_dict()
+    print(actual["encoders"][7])
+    assert snapshot("json") == actual

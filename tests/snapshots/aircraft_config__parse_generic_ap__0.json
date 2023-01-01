@@ -2,117 +2,277 @@
   "buttons": [
     {
       "index": 1,
-      "layer_a_text": "TOGGLE_FLIGHT_DIRECTOR"
+      "layer_a_text": {
+        "original": "TOGGLE_FLIGHT_DIRECTOR",
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 2,
-      "layer_a_text": "AP_HDG_HOLD"
+      "layer_a_text": {
+        "original": "AP_HDG_HOLD",
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 3,
-      "layer_a_text": "AP_AIRSPEED_HOLD"
+      "layer_a_text": {
+        "original": "AP_AIRSPEED_HOLD",
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 4,
-      "layer_a_text": "AP_ALT_HOLD"
+      "layer_a_text": {
+        "original": "AP_ALT_HOLD",
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 5,
-      "layer_a_text": "AP_VS_HOLD"
+      "layer_a_text": {
+        "original": "AP_VS_HOLD",
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 6,
-      "layer_a_text": "AP_BC_HOLD"
+      "layer_a_text": {
+        "original": "AP_BC_HOLD",
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 7,
-      "layer_a_text": "AUTO_THROTTLE_TO_GA"
+      "layer_a_text": {
+        "original": "AUTO_THROTTLE_TO_GA",
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 8,
-      "layer_a_text": null
+      "layer_a_text": {
+        "original": null,
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 9,
-      "layer_a_text": "AP_MASTER"
+      "layer_a_text": {
+        "original": "AP_MASTER",
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 10,
-      "layer_a_text": "AP_NAV1_HOLD"
+      "layer_a_text": {
+        "original": "AP_NAV1_HOLD",
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 11,
-      "layer_a_text": "AUTO_THROTTLE_ARM"
+      "layer_a_text": {
+        "original": "AUTO_THROTTLE_ARM",
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 12,
-      "layer_a_text": "FLIGHT_LEVEL_CHANGE"
+      "layer_a_text": {
+        "original": "FLIGHT_LEVEL_CHANGE",
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 13,
-      "layer_a_text": "AP_LOC_HOLD"
+      "layer_a_text": {
+        "original": "AP_LOC_HOLD",
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 14,
-      "layer_a_text": "AP_APR_HOLD"
+      "layer_a_text": {
+        "original": "AP_APR_HOLD",
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 15,
-      "layer_a_text": "YAW_DAMPER_TOGGLE"
+      "layer_a_text": {
+        "original": "YAW_DAMPER_TOGGLE",
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 16,
-      "layer_a_text": null
+      "layer_a_text": {
+        "original": null,
+        "display": null,
+        "replaced": false
+      }
     }
   ],
   "encoders": [
     {
       "index": 1,
-      "layer_a_primary_text": "VOR1_OBI_INC",
-      "layer_a_secondary_text": "{alternate}",
-      "layer_a_tertiary_text": null
+      "layer_a_primary_text": {
+        "original": "VOR1_OBI_INC",
+        "display": null,
+        "replaced": false
+      },
+      "layer_a_secondary_text": {
+        "original": "{alternate}",
+        "display": null,
+        "replaced": false
+      },
+      "layer_a_tertiary_text": {
+        "original": null,
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 2,
-      "layer_a_primary_text": "HEADING_BUG_INC",
-      "layer_a_secondary_text": "HEADING_BUG_SET",
-      "layer_a_tertiary_text": null
+      "layer_a_primary_text": {
+        "original": "HEADING_BUG_INC",
+        "display": null,
+        "replaced": false
+      },
+      "layer_a_secondary_text": {
+        "original": "HEADING_BUG_SET",
+        "display": null,
+        "replaced": false
+      },
+      "layer_a_tertiary_text": {
+        "original": null,
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 3,
-      "layer_a_primary_text": "AP_SPD_VAR_INC",
-      "layer_a_secondary_text": null,
-      "layer_a_tertiary_text": null
+      "layer_a_primary_text": {
+        "original": "AP_SPD_VAR_INC",
+        "display": null,
+        "replaced": false
+      },
+      "layer_a_secondary_text": {
+        "original": null,
+        "display": null,
+        "replaced": false
+      },
+      "layer_a_tertiary_text": {
+        "original": null,
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 4,
-      "layer_a_primary_text": "AP_ALT_VAR_INC",
-      "layer_a_secondary_text": null,
-      "layer_a_tertiary_text": null
+      "layer_a_primary_text": {
+        "original": "AP_ALT_VAR_INC",
+        "display": null,
+        "replaced": false
+      },
+      "layer_a_secondary_text": {
+        "original": null,
+        "display": null,
+        "replaced": false
+      },
+      "layer_a_tertiary_text": {
+        "original": null,
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 5,
-      "layer_a_primary_text": "AP_VS_VAR_INC",
-      "layer_a_secondary_text": "AP_ATT_HOLD",
-      "layer_a_tertiary_text": null
+      "layer_a_primary_text": {
+        "original": "AP_VS_VAR_INC",
+        "display": null,
+        "replaced": false
+      },
+      "layer_a_secondary_text": {
+        "original": "AP_ATT_HOLD",
+        "display": null,
+        "replaced": false
+      },
+      "layer_a_tertiary_text": {
+        "original": null,
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 6,
-      "layer_a_primary_text": "KOHLSMAN_INC",
-      "layer_a_secondary_text": "KOHLSMAN_SET",
-      "layer_a_tertiary_text": null
+      "layer_a_primary_text": {
+        "original": "KOHLSMAN_INC",
+        "display": null,
+        "replaced": false
+      },
+      "layer_a_secondary_text": {
+        "original": "KOHLSMAN_SET",
+        "display": null,
+        "replaced": false
+      },
+      "layer_a_tertiary_text": {
+        "original": null,
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 7,
-      "layer_a_primary_text": "COM_RADIO_WHOLE_INC",
-      "layer_a_secondary_text": "{alternate}",
-      "layer_a_tertiary_text": "COM_STBY_RADIO_SWAP"
+      "layer_a_primary_text": {
+        "original": "COM_RADIO_WHOLE_INC",
+        "display": null,
+        "replaced": false
+      },
+      "layer_a_secondary_text": {
+        "original": "{alternate}",
+        "display": null,
+        "replaced": false
+      },
+      "layer_a_tertiary_text": {
+        "original": "COM_STBY_RADIO_SWAP",
+        "display": null,
+        "replaced": false
+      }
     },
     {
       "index": 8,
-      "layer_a_primary_text": "NAV1_RADIO_WHOLE_INC",
-      "layer_a_secondary_text": "{alternate}",
-      "layer_a_tertiary_text": "NAV1_RADIO_SWAP"
+      "layer_a_primary_text": {
+        "original": "NAV1_RADIO_WHOLE_INC",
+        "display": null,
+        "replaced": false
+      },
+      "layer_a_secondary_text": {
+        "original": "{alternate}",
+        "display": null,
+        "replaced": false
+      },
+      "layer_a_tertiary_text": {
+        "original": "NAV1_RADIO_SWAP",
+        "display": null,
+        "replaced": false
+      }
     }
   ],
   "filepath": "tests\\data\\config_generic_ap.json",
