@@ -1,7 +1,8 @@
+import html
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from re import Pattern
-import re
 from typing import List, Optional
 
 from dataclasses_json import DataClassJsonMixin
@@ -13,6 +14,10 @@ from template_maker.vars import default_mappings, user_mappings
 class TextMapping(DataClassJsonMixin):
     pat: Pattern
     replacement: str
+
+
+def sanitise_replacement(original: str) -> str:
+    return html.escape(original)
 
 
 def _from_disk(fp: Path) -> List[TextMapping]:
@@ -30,7 +35,7 @@ def _from_disk(fp: Path) -> List[TextMapping]:
         k, v = l.split("=")
         k = k.strip()
         v = v.strip()
-        memo.append(TextMapping(pat=re.compile(k), replacement=v))
+        memo.append(TextMapping(pat=re.compile(k), replacement=sanitise_replacement(v)))
     return memo
 
 
