@@ -36,12 +36,18 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
             self.title("Template preview")
             self.geometry("{}x{}".format(window_width, window_height))
 
-            menubar = tk.Menu(self)
-            filemenu = tk.Menu(menubar, tearoff=False)
-            filemenu.add_command(label="Open", command=self.select_and_load)
-            filemenu.add_command(label="Exit", command=self.quit)
-            menubar.add_cascade(label="File", menu=filemenu)
-            self.config(menu=menubar)
+            self.menubar = tk.Menu(self)
+            self.filemenu = tk.Menu(self.menubar, tearoff=False)
+            self.filemenu.add_command(
+                label="Open", command=lambda: self.select_and_load(None)
+            )
+            self.filemenu.add_command(
+                label="Reload", command=self.reload, state="disabled"
+            )
+            self.filemenu.add_command(label="Exit", command=self.quit)
+
+            self.menubar.add_cascade(label="File", menu=self.filemenu)
+            self.config(menu=self.menubar)
 
             self.loaded_image_file_path: Optional[Path] = None
             self.current_template_info: Optional[TemplateInfo] = None
@@ -52,10 +58,14 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
                 self.current_template_info = template_info
                 self.load_image(template_info.dest_png)
 
-        def select_and_load(self):
-            ac_config = select_aircraft_config(
-                self._config.xtouch_mini_fs2020_aircraft_path
-            )
+        def reload(self):
+            self.select_and_load(self.current_template_info.filepath)
+
+        def select_and_load(self, ac_config: Optional[str]):
+            if ac_config is None:
+                ac_config = select_aircraft_config(
+                    self._config.xtouch_mini_fs2020_aircraft_path
+                )
 
             if ac_config is None:
                 return
@@ -80,6 +90,7 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
             frame.pack()
             tk.Label(frame, image=self.python_image).pack(fill="both", expand=True)
             self.loaded_image_file_path = image_file_path
+            self.filemenu.entryconfig("Reload", state="normal")
 
     return App
 
