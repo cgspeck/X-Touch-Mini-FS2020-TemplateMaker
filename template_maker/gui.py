@@ -1,3 +1,4 @@
+import shutil
 import time
 import tkinter as tk
 from pathlib import Path
@@ -13,6 +14,7 @@ from template_maker.config import Config
 from template_maker.generator import PNG_DIM
 from template_maker.logger import get_logger
 from template_maker.template_info import TemplateInfo
+from template_maker import vars
 
 logger = get_logger()
 GUI_MODE = True
@@ -39,10 +41,16 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
             self.menubar = tk.Menu(self)
             self.filemenu = tk.Menu(self.menubar, tearoff=False)
             self.filemenu.add_command(
-                label="Open", command=lambda: self.select_and_load(None)
+                label="Open...", command=lambda: self.select_and_load(None)
             )
             self.filemenu.add_command(
                 label="Reload", command=self.reload, state="disabled"
+            )
+            self.filemenu.add_command(
+                label="Save PNG...", command=self.save_png, state="disabled"
+            )
+            self.filemenu.add_command(
+                label="Save SVG...", command=self.save_svg, state="disabled"
             )
             self.filemenu.add_command(label="Exit", command=self.quit)
 
@@ -57,6 +65,11 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
             if template_info is not None:
                 self.current_template_info = template_info
                 self.load_image(template_info.dest_png)
+
+        def enable_template_loaded_menus(self):
+            self.filemenu.entryconfig("Reload", state="normal")
+            self.filemenu.entryconfig("Save PNG...", state="normal")
+            self.filemenu.entryconfig("Save SVG...", state="normal")
 
         def reload(self):
             self.select_and_load(self.current_template_info.filepath)
@@ -90,7 +103,29 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
             frame.pack()
             tk.Label(frame, image=self.python_image).pack(fill="both", expand=True)
             self.loaded_image_file_path = image_file_path
-            self.filemenu.entryconfig("Reload", state="normal")
+            self.enable_template_loaded_menus()
+
+        def save_png(self):
+            fp = save_dialog("PNG files", "png")
+            if fp is None:
+                pass
+
+            if fp.suffix.lower() != ".png":
+                fp = fp.parent / (fp.name + ".png")
+
+            logger.info(f"Writing {fp}")
+            shutil.copy(self.current_template_info.dest_png, fp)
+
+        def save_svg(self):
+            fp = save_dialog("SVG files", "svg")
+            if fp is None:
+                pass
+
+            if fp.suffix.lower() != ".svg":
+                fp = fp.parent / (fp.name + ".svg")
+
+            logger.info(f"Writing {fp}")
+            shutil.copy(self.current_template_info.dest_svg, fp)
 
     return App
 
@@ -109,6 +144,22 @@ def select_aircraft_config(initial_dir: Union[str, Path]) -> Optional[Path]:
 
     filename = fd.askopenfilename(
         title="Select aircraft config", initialdir=_initial_dir, filetypes=filetypes
+    )
+
+    if len(filename) == 0:
+        return None
+
+    return Path(filename)
+
+
+def save_dialog(fileext: str, filetype_desc: str) -> Optional[Path]:
+    filetypes = ((filetype_desc, f"*.{fileext}"), ("All files", "*.*"))
+
+    filename = fd.asksaveasfilename(
+        title="Save image",
+        initialdir=vars.mydocs_path,
+        filetypes=filetypes,
+        defaultextension=fileext,
     )
 
     if len(filename) == 0:
