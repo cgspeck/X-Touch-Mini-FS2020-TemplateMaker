@@ -12,6 +12,8 @@ logger = get_logger()
 
 # reference height is mm
 base_dim = [248.5, 87]
+PNG_DIM = [2086, 730]
+
 
 def generate_svgstr(buttons: List[Button], encoders: List[Encoder]) -> str:
     memo = f'<svg version="1.1" width="{base_dim[0]}" height="{base_dim[1]}" xmlns="http://www.w3.org/2000/svg">\n'
@@ -39,17 +41,18 @@ def generate_svgstr(buttons: List[Button], encoders: List[Encoder]) -> str:
     memo += "</svg>"
     return memo
 
+
 def svg_to_png(svgstr: str, filename: Path, inkscape_path: Path) -> None:
     tf = tempfile.NamedTemporaryFile("wt", suffix=".svg", delete=False)
     tf.write(svgstr)
     tf.close()
     args = [
         str(inkscape_path),
-        '-w',
-        '2086',
-        '--export-filename',
-        f'{filename}',
-        f'{tf.name}'
+        "-w",
+        f"{PNG_DIM[0]}",
+        "--export-filename",
+        f"{filename}",
+        f"{tf.name}",
     ]
     err = None
 

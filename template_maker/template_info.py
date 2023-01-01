@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from dataclasses_json import DataClassJsonMixin, config
 from template_maker.button import Button
@@ -13,7 +13,9 @@ class TemplateInfo(DataClassJsonMixin):
     buttons: List[Button]
     encoders: List[Encoder]
     filepath: Path = field(metadata=config(encoder=str, decoder=Path))
-    error_msgs: List[str]
+    error_msgs: List[str] = field(default_factory=list)
+    dest_svg: Optional[Path] = None
+    dest_png: Optional[Path] = None
 
     def apply_template_mappings(self, mappings: List[TextMapping]) -> None:
         for button in self.buttons:

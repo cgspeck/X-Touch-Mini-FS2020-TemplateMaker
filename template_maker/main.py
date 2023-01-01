@@ -2,13 +2,10 @@ import argparse
 import sys
 import time
 from pathlib import Path
-from typing import List
 
 from template_maker import aircraft_config, gui
-from template_maker.button import Button
 from template_maker.config import Config
 
-from template_maker.encoder import Encoder
 from template_maker.generator import generate_svgstr, svg_to_png
 from template_maker.logger import setup_logger
 from template_maker.template_info import TemplateInfo
@@ -41,20 +38,20 @@ def create_parser():
     return parser
 
 
-def run_generator(template_info: TemplateInfo, dest_svg: Path, dest_png: Path):
+def run_generator(template_info: TemplateInfo):
     svgstr = generate_svgstr(template_info.buttons, template_info.encoders)
-    logger.info(f"Writing {dest_svg}")
+    logger.info(f"Writing {template_info.dest_svg}")
 
     if not output_path.exists():
         output_path.mkdir(parents=True)
 
-    Path(dest_svg).write_text(svgstr)
+    Path(template_info.dest_svg).write_text(svgstr)
 
-    logger.info(f"Writing {dest_png}")
-    svg_to_png(svgstr, dest_png, config.inkscape_path)
+    logger.info(f"Writing {template_info.dest_png}")
+    svg_to_png(svgstr, template_info.dest_png, config.inkscape_path)
 
 
-def load_mappings_and_run(logger, config, run, gui_mode, ac_config):
+def load_mappings_and_run(logger, config, gui_mode, ac_config):
     mappings = load_mappings(config.remove_unrecognized)
     logger.info(f"Loading '{ac_config}'")
     template_info = parse_ac_config_and_apply_mappings(ac_config, mappings)
@@ -68,11 +65,11 @@ def load_mappings_and_run(logger, config, run, gui_mode, ac_config):
             gui.do_error_box("Error parsing aircraft config", msg)
 
     fn = f"{int(time.time())}"
-    dest_svg = Path(output_path, f"{fn}.svg")
-    dest_png = Path(output_path, f"{fn}.png")
+    template_info.dest_svg = Path(output_path, f"{fn}.svg")
+    template_info.dest_png = Path(output_path, f"{fn}.png")
 
-    run(template_info, dest_svg, dest_png)
-    return dest_png
+    run_generator(template_info)
+    return template_info
 
 
 def parse_ac_config_and_apply_mappings(ac_config, mappings):
@@ -101,8 +98,8 @@ if __name__ == "__main__":
     if args.watch:
         gui_mode = True
 
-    dest_png = load_mappings_and_run(logger, config, run_generator, gui_mode, ac_config)
+    template_info = load_mappings_and_run(logger, config, gui_mode, ac_config)
 
     if gui_mode or args.preview:
-        app = gui.make_preview_app(config, dest_png)()
+        app = gui.make_preview_app(config, template_info)()
         app.mainloop()
