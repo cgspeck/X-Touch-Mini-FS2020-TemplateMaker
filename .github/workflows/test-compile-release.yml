@@ -29,6 +29,7 @@ jobs:
           python -m pytest tests
       - name: Compile
         run: |
+          pip install pyinstaller==5.7.0
           pyinstaller --noconfirm main.spec
       - name: Release
         uses: softprops/action-gh-release@v1
