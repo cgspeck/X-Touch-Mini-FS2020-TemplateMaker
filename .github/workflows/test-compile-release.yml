@@ -38,4 +38,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           fail_on_unmatched_files: true
-          files: dist\xtouch-template-maker\**\*
+          files: |
+            dist\**\*
+            dist\xtouch-template-maker\*
