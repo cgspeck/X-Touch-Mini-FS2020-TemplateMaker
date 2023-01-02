@@ -39,5 +39,5 @@ jobs:
         with:
           fail_on_unmatched_files: true
           files: |
-            dist\**\*
-            dist\xtouch-template-maker\*
+            dist/**/*
+            dist/xtouch-template-maker/*
