@@ -46,8 +46,7 @@ run
 
 ## Current limitations
 
-- only processes values for layer a (since this is all I use)
-- file watch not implemented
+- only processes values for Layer A (since this is all I use)
 
 PRs are welcomed.
 

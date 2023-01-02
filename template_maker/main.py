@@ -28,12 +28,6 @@ def create_parser():
         help="Path to aircraft config, if omitted then a file chooser will launch",
     )
     parser.add_argument(
-        "--watch",
-        "-w",
-        action="store_true",
-        help="Display generated file an window and reload if aircraft config or string mapping changes",
-    )
-    parser.add_argument(
         "--preview", "-p", action="store_true", help="Force a preview window to appear"
     )
     return parser
@@ -99,9 +93,6 @@ if __name__ == "__main__":
         ac_config = Path(ac_config)
     else:
         ac_config = Path(args.config)
-
-    if args.watch:
-        gui_mode = True
 
     template_info = load_mappings_and_run(logger, config, gui_mode, ac_config)
 
