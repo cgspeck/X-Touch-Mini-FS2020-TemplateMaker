@@ -32,15 +32,17 @@ class Encoder(DataClassJsonMixin):
 
         self.mid_x = encoder_x_origin + encoder_rad + (self.index - 1) * encoder_x_dist
 
-    def apply_mappings(self, mappings: List[TextMapping]) -> None:
+    def apply_mappings(
+        self, mappings: List[TextMapping], blank_unrecognized: bool
+    ) -> None:
         if self.layer_a_primary_text is not None:
-            self.layer_a_primary_text.apply_mappings(mappings)
+            self.layer_a_primary_text.apply_mappings(mappings, blank_unrecognized)
 
         if self.layer_a_secondary_text is not None:
-            self.layer_a_secondary_text.apply_mappings(mappings)
+            self.layer_a_secondary_text.apply_mappings(mappings, blank_unrecognized)
 
         if self.layer_a_tertiary_text is not None:
-            self.layer_a_tertiary_text.apply_mappings(mappings)
+            self.layer_a_tertiary_text.apply_mappings(mappings, blank_unrecognized)
 
     def emit_mask(self) -> str:
         return f'<circle cx="{self.mid_x}" cy="{encoder_y_origin + encoder_rad}" r="{encoder_rad}" fill="black" />\n'

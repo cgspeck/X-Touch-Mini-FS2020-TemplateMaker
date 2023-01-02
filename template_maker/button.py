@@ -40,11 +40,13 @@ class Button(DataClassJsonMixin):
 
         self.text_y = self.y + button_dim[1] + label_y_gap
 
-    def apply_mappings(self, mappings: List[TextMapping]) -> None:
+    def apply_mappings(
+        self, mappings: List[TextMapping], blank_unrecognized: bool
+    ) -> None:
         if self.layer_a_text is None:
             return
 
-        self.layer_a_text.apply_mappings(mappings)
+        self.layer_a_text.apply_mappings(mappings, blank_unrecognized)
 
     def emit_mask(self) -> str:
         return f'<rect x="{self.x}" y="{self.y}" width="{button_dim[0]}" height="{button_dim[1]}" fill="black" />\n'

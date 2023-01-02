@@ -60,17 +60,14 @@ def _from_disk(fp: Path) -> List[TextMapping]:
     return memo
 
 
-def load_mappings(remove_unrecognized: Optional[bool] = False) -> List[TextMapping]:
+def load_mappings() -> List[TextMapping]:
     memo = []
 
     memo.extend(_from_disk(user_mappings))
 
     if len(memo) == 0:
         reset_mappings()
-        return load_mappings(remove_unrecognized)
-
-    if remove_unrecognized:
-        memo.append(TextMapping(pat=re.compile(r".*"), replacement=""))
+        return load_mappings()
 
     return memo
 

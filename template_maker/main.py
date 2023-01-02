@@ -1,4 +1,5 @@
 import argparse
+from logging import Logger
 import sys
 import time
 from pathlib import Path
@@ -51,10 +52,14 @@ def run_generator(template_info: TemplateInfo):
     svg_to_png(svgstr, template_info.dest_png, config.inkscape_path)
 
 
-def load_mappings_and_run(logger, config, gui_mode, ac_config):
-    mappings = load_mappings(config.remove_unrecognized)
+def load_mappings_and_run(
+    logger: Logger, config: Config, gui_mode: bool, ac_config: Path
+):
+    mappings = load_mappings()
     logger.info(f"Loading '{ac_config}'")
-    template_info = parse_ac_config_and_apply_mappings(ac_config, mappings)
+    template_info = parse_ac_config_and_apply_mappings(
+        ac_config, mappings, config.remove_unrecognized
+    )
 
     if len(template_info.error_msgs) > 0:
         for m in template_info.error_msgs:
@@ -72,9 +77,9 @@ def load_mappings_and_run(logger, config, gui_mode, ac_config):
     return template_info
 
 
-def parse_ac_config_and_apply_mappings(ac_config, mappings):
+def parse_ac_config_and_apply_mappings(ac_config, mappings, blank_unrecognized: bool):
     template_info = aircraft_config.parse_aircraft_config(ac_config)
-    template_info.apply_template_mappings(mappings)
+    template_info.apply_template_mappings(mappings, blank_unrecognized)
     return template_info
 
 

@@ -20,12 +20,14 @@ class TemplateInfo(DataClassJsonMixin):
 
     _unmapped_labels: Optional[List[Label]] = None
 
-    def apply_template_mappings(self, mappings: List[TextMapping]) -> None:
+    def apply_template_mappings(
+        self, mappings: List[TextMapping], blank_unrecognized: bool
+    ) -> None:
         for button in self.buttons:
-            button.apply_mappings(mappings)
+            button.apply_mappings(mappings, blank_unrecognized)
 
         for encoder in self.encoders:
-            encoder.apply_mappings(mappings)
+            encoder.apply_mappings(mappings, blank_unrecognized)
 
     def gather_unmapped_labels(self) -> List[Label]:
         if self._unmapped_labels is not None:

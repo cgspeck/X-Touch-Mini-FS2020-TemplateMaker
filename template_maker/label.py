@@ -19,7 +19,9 @@ class Label(DataClassJsonMixin):
         if type(other) != Label:
             raise ValueError(f"Unable to compare Label against {type(other)}")
 
-    def apply_mappings(self, mappings: List[TextMapping]) -> None:
+    def apply_mappings(
+        self, mappings: List[TextMapping], blank_unrecognized: bool
+    ) -> None:
         if self.original is None:
             return
 
@@ -32,6 +34,9 @@ class Label(DataClassJsonMixin):
                 self.replaced = True
                 m.in_use = True
                 break
+
+        if blank_unrecognized and not self.replaced:
+            self.display = ""
 
 
 def gather_unmapped_label(obj, property) -> List[Label]:

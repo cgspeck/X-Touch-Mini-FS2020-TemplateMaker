@@ -133,7 +133,7 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
             self.show_label_mapping_editor()
 
         def show_label_mapping_editor(self):
-            mappings = load_mappings(False)
+            mappings = load_mappings()
             mappings.extend(
                 generate_mapping_templates(
                     self.current_template_info.gather_unmapped_labels()
