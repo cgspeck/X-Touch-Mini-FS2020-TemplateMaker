@@ -71,9 +71,16 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
                 label="Restore default mappings",
                 command=self.confirm_and_reset_mappings,
             )
-            self.editmenu.add_command(
-                label="Blank out unrecognised labels",
-                command=noop,
+
+            self.desired_blank_setting = tk.BooleanVar(
+                self, value=config.remove_unrecognized
+            )
+            self.editmenu.add_checkbutton(
+                label="Blank out unrecognized labels",
+                command=self.update_blank_setting_and_reload,
+                onvalue=True,
+                offvalue=False,
+                variable=self.desired_blank_setting,
             )
             self.menubar.add_cascade(label="Edit", menu=self.editmenu)
 
@@ -201,6 +208,11 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
 
             logger.info(f"Writing {fp}")
             shutil.copy(self.current_template_info.dest_svg, fp)
+
+        def update_blank_setting_and_reload(self):
+            self._config.remove_unrecognized = self.desired_blank_setting.get()
+            self._config.save()
+            self.reload()
 
     return App
 

@@ -52,10 +52,16 @@ class Encoder(DataClassJsonMixin):
         tertiary_text = None
         memo = ""
 
-        if self.layer_a_secondary_text is not None:
+        if (
+            self.layer_a_secondary_text is not None
+            and self.layer_a_secondary_text.display_text_has_content
+        ):
             secondary_text = self.layer_a_secondary_text.display
 
-        if self.layer_a_tertiary_text is not None:
+        if (
+            self.layer_a_tertiary_text is not None
+            and self.layer_a_tertiary_text.display_text_has_content
+        ):
             tertiary_text = self.layer_a_tertiary_text.display
 
         if secondary_text is not None and tertiary_text is not None:
@@ -70,7 +76,10 @@ class Encoder(DataClassJsonMixin):
     def emit_text(self) -> str:
         memo = ""
 
-        if self.layer_a_primary_text is not None:
+        if (
+            self.layer_a_primary_text is not None
+            and self.layer_a_primary_text.display_text_has_content
+        ):
             memo += f'<text x="{self.mid_x}" y="{encoder_y_primary_text}" font-size="{encoder_primary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a_primary_text.display or ""}</text>\n'
 
         memo += self._emit_secondary_tertiary_text()

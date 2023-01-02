@@ -19,6 +19,10 @@ class Label(DataClassJsonMixin):
         if type(other) != Label:
             raise ValueError(f"Unable to compare Label against {type(other)}")
 
+    @property
+    def display_text_has_content(self) -> bool:
+        return self.display is not None and len(self.display.strip()) > 0
+
     def apply_mappings(
         self, mappings: List[TextMapping], blank_unrecognized: bool
     ) -> None:
