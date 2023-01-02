@@ -33,7 +33,7 @@ jobs:
           pyinstaller --noconfirm main.spec
           dir
           dir dist
-          dir dist\Xtouch Template Maker
+          dir "dist\Xtouch Template Maker"
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
