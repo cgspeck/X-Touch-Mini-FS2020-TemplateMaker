@@ -14,7 +14,6 @@ class LabelMappingEditor(tk.Toplevel):
         save_callback: Callable[[List[TextMapping]], None],
         mappings: List[TextMapping],
     ) -> None:
-        print(type(parent))
         super().__init__(parent)
         self.save_callback = save_callback
         self.geometry("800x800")
