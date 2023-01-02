@@ -33,9 +33,9 @@ jobs:
           pyinstaller --noconfirm main.spec
           dir
           dir dist
-          dir "dist\Xtouch Template Maker"
+          dir dist\xtouch-template-maker
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           fail_on_unmatched_files: true
-          files: dist\Xtouch Template Maker\**\*
+          files: dist\xtouch-template-maker\**\*
