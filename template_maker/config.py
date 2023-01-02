@@ -25,7 +25,9 @@ class Config:
     schema_version = SCHEMA_VERSION
 
     def __post_init__(self):
-        self.xtouch_mini_fs2020_aircraft_path = Path(self.xtouch_mini_fs2020_path, 'Configurations')
+        self.xtouch_mini_fs2020_aircraft_path = Path(
+            self.xtouch_mini_fs2020_path, "Configurations"
+        )
 
     @classmethod
     def locate_file(cls, filename) -> Optional[Path]:
@@ -53,8 +55,9 @@ class Config:
             raise PrerequsitesNotFoundException()
 
         memo = cls(
-            inkscape_path,
-            xtouch_mini_fs2020_path.parent
+            inkscape_path=inkscape_path,
+            xtouch_mini_fs2020_path=xtouch_mini_fs2020_path.parent,
+            remove_unrecognized=True,
         )
 
         memo.save()
@@ -65,20 +68,20 @@ class Config:
         if CONFIG_FILE.exists():
             dct = json.loads(CONFIG_FILE.read_text())
 
-            if 'schema_version' in dct:
-                del(dct['schema_version'])
-            dct['inkscape_path']: Path(dct['inkscape_path'])
-            dct['xtouch_mini_fs2020_path']: Path(dct['xtouch_mini_fs2020_path'])
+            if "schema_version" in dct:
+                del dct["schema_version"]
+            dct["inkscape_path"]: Path(dct["inkscape_path"])
+            dct["xtouch_mini_fs2020_path"]: Path(dct["xtouch_mini_fs2020_path"])
             return cls(**dct)
 
         return cls.create()
 
     def save(self):
         memo = {
-            'inkscape_path': str(self.inkscape_path),
-            'xtouch_mini_fs2020_path': str(self.xtouch_mini_fs2020_path),
-            'remove_unrecognized': self.remove_unrecognized,
-            'schema_version': self.schema_version
+            "inkscape_path": str(self.inkscape_path),
+            "xtouch_mini_fs2020_path": str(self.xtouch_mini_fs2020_path),
+            "remove_unrecognized": self.remove_unrecognized,
+            "schema_version": self.schema_version,
         }
         logger.info(f"Writing '{CONFIG_FILE}'")
         CONFIG_FILE.write_text(json.dumps(memo, sort_keys=True, indent=2))
