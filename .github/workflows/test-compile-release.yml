@@ -31,7 +31,11 @@ jobs:
         run: |
           pip install pyinstaller==5.7.0
           pyinstaller --noconfirm main.spec
+          dir
+          dir dist
+          dir dist\Xtouch Template Maker
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: dist/*
+          fail_on_unmatched_files: true
+          files: dist\Xtouch Template Maker\**\*
