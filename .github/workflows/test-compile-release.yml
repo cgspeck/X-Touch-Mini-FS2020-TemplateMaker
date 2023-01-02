@@ -34,7 +34,8 @@ jobs:
           dir
           dir dist
           dir dist\xtouch-template-maker
-      - uses: vimtor/action-zip@v1
+      - name: Archive
+        uses: vimtor/action-zip@v1
         with:
           files: dist/xtouch-template-maker/
           dest: xtouch-template-maker.zip
