@@ -35,4 +35,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            "dist\Xtouch Template Maker\*"
+            dist\Xtouch Template Maker\*
