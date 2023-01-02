@@ -34,10 +34,14 @@ jobs:
           dir
           dir dist
           dir dist\xtouch-template-maker
+      - uses: vimtor/action-zip@v1
+        with:
+          files: dist/xtouch-template-maker/
+          dest: xtouch-template-maker.zip
+          recursive: true
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           fail_on_unmatched_files: true
           files: |
-            dist/**/*
-            dist/xtouch-template-maker/*
+            xtouch-template-maker.zip
