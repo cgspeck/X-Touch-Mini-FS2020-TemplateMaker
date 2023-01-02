@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python 3.10
@@ -29,9 +29,20 @@ jobs:
           python -m pytest tests
       - name: Compile
         run: |
+          pip install pyinstaller==5.7.0
           pyinstaller --noconfirm main.spec
+          dir
+          dir dist
+          dir dist\xtouch-template-maker
+      - name: Archive
+        uses: vimtor/action-zip@v1
+        with:
+          files: dist/xtouch-template-maker/
+          dest: xtouch-template-maker.zip
+          recursive: true
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
+          fail_on_unmatched_files: true
           files: |
-            "dist\Xtouch Template Maker\*"
+            xtouch-template-maker.zip

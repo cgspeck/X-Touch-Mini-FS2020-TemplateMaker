@@ -6,6 +6,8 @@ The PNGs have transparent regions and can be used with paper desktop CNCs such a
 
 This allows you to rapidly experiment with and change your bindings.
 
+Head on to [releases to download the latest version](https://github.com/cgspeck/X-Touch-Mini-FS2020-TemplateMaker/releases), or read on for development instructions.
+
 ## Pre-requsites
 
 1. [X-Touch Mini FS2020](https://github.com/maartentamboer/X-Touch-Mini-FS2020)
@@ -69,3 +71,5 @@ Various Stack Overflow documentation:
 - [Convert SVG to PNG in Python](https://stackoverflow.com/questions/6589358/convert-svg-to-png-in-python)
 
 And finally December.com: [Scalable Vector Graphics Color Names](https://www.december.com/html/spec/colorsvg.html).
+
+[Convertico](https://convertico.com/) for PNG to ICO conversion, much better then alternatives.
