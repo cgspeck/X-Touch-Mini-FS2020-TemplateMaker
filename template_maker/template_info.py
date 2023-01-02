@@ -40,5 +40,11 @@ class TemplateInfo(DataClassJsonMixin):
             memo.extend(encoder.gather_unmapped_labels())
 
         memo.sort()
-        self._unmapped_labels = memo
+        uniq = []
+
+        for i in memo:
+            if i not in uniq:
+                uniq.append(i)
+
+        self._unmapped_labels = uniq
         return self.gather_unmapped_labels()

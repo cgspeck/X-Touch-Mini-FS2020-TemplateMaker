@@ -2,8 +2,8 @@ import shutil
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog as fd
-from tkinter import messagebox
-from typing import Optional, Union
+from tkinter import messagebox, ttk
+from typing import List, Optional, Union
 
 from PIL import Image, ImageTk
 from win32api import GetSystemMetrics
@@ -15,6 +15,13 @@ from template_maker.logger import get_logger
 from template_maker.template_info import TemplateInfo
 from template_maker import vars
 from template_maker.gui_label_mapping_editor import LabelMappingEditor
+from template_maker.text_mapping import (
+    TextMapping,
+    load_mappings,
+    reset_mappings,
+    save_mappings,
+)
+from template_maker.utils import generate_mapping_templates
 
 logger = get_logger()
 GUI_MODE = True
@@ -61,7 +68,11 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
                 command=self.show_label_mapping_editor,
             )
             self.editmenu.add_command(
-                label="Settings...",
+                label="Restore default mappings",
+                command=self.confirm_and_reset_mappings,
+            )
+            self.editmenu.add_command(
+                label="Blank out unrecognised labels",
                 command=noop,
             )
             self.menubar.add_cascade(label="Edit", menu=self.editmenu)
@@ -122,10 +133,37 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
             self.show_label_mapping_editor()
 
         def show_label_mapping_editor(self):
-            LabelMappingEditor(self, self.save_mappings_and_reload)
+            mappings = load_mappings(False)
+            mappings.extend(
+                generate_mapping_templates(
+                    self.current_template_info.gather_unmapped_labels()
+                )
+            )
+            mappings.sort()
+            LabelMappingEditor(self, self.save_mappings_and_reload, mappings)
 
-        def save_mappings_and_reload(self):
-            print("save_mappings_and_reload")
+        def save_mappings_and_reload(self, updated_mappings: List[TextMapping]):
+            selected: List[TextMapping] = []
+
+            for m in updated_mappings:
+                if m.modified or not m.new:
+                    selected.append(m)
+
+            save_mappings(selected)
+            self.reload()
+
+        def confirm_and_reset_mappings(self):
+            message = f"This will replace all custom mappings with the default. Are you sure you want to continue?"
+            choice = messagebox.askquestion(
+                title="Reset user mappings?",
+                message=message,
+            )
+
+            if choice == "no":
+                return
+
+            reset_mappings()
+            self.reload()
 
         def load_image(self, image_file_path: Path):
             if self.loaded_image_file_path is not None:
@@ -134,11 +172,11 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
             img = Image.open(image_file_path)
             img.thumbnail([window_width, window_height], Image.Resampling.LANCZOS)
             self.python_image = ImageTk.PhotoImage(img)
-            frame = tk.Frame(
+            frame = ttk.Frame(
                 self, width=window_width, height=window_height, name="image_frame"
             )
             frame.pack()
-            tk.Label(frame, image=self.python_image).pack(fill="both", expand=True)
+            ttk.Label(frame, image=self.python_image).pack(fill="both", expand=True)
             self.loaded_image_file_path = image_file_path
             self.enable_template_loaded_menus()
 
