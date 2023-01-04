@@ -2,10 +2,11 @@ from queue import Queue
 import shutil
 import tkinter as tk
 from pathlib import Path
-from tkinter import CENTER, Event, filedialog as fd
+from tkinter import CENTER, YES, Event, filedialog as fd
 from tkinter import messagebox, ttk
 from typing import List, Optional, Union
 from uuid import UUID, uuid4
+import webbrowser
 
 from PIL import Image, ImageTk
 from win32api import GetSystemMetrics
@@ -25,7 +26,9 @@ from template_maker.text_mapping import (
     reset_mappings,
     save_mappings,
 )
+from template_maker.update_check_thread import UpdateCheckResult, UpdateCheckThread
 from template_maker.utils import generate_mapping_templates
+from template_maker.version import VERSION
 
 logger = get_logger()
 
@@ -54,7 +57,7 @@ def make_preview_app(
     class App(tk.Tk):
         def __init__(self):
             super().__init__()
-            self.title("X-Touch Mini FS2020 Template Maker")
+            self.title(f"X-Touch Mini FS2020 Template Maker {VERSION}")
             self.geometry("{}x{}".format(window_width, window_height))
 
             self.menubar = tk.Menu(self)
@@ -98,6 +101,10 @@ def make_preview_app(
 
             self.helpmenu = tk.Menu(self.menubar, tearoff=False)
             self.helpmenu.add_command(
+                label="Check for updates...",
+                command=self.check_for_update,
+            )
+            self.helpmenu.add_command(
                 label="About",
                 command=self.show_about_message,
             )
@@ -127,6 +134,12 @@ def make_preview_app(
             pb.start()
             pb.place(relx=0.5, rely=0.5, anchor=CENTER)
 
+        def check_for_update(self):
+            job_id = uuid4()
+            logger.info(f"Submitting update check job {job_id}")
+            t = UpdateCheckThread(job_id, self.queue, logger, VERSION)
+            t.start()
+
         def check_queue(self):
             if not self.queue.empty():
                 msg: Message = self.queue.get_nowait()
@@ -141,8 +154,40 @@ def make_preview_app(
                         )
                     else:
                         logger.info("Discarding unexpected message")
+                if msg.message_type == MessageType.UPDATE_CHECK_COMPLETE:
+                    self.process_update_check_complete_message(
+                        msg.get_update_check_result()
+                    )
 
             self.after(100, self.check_queue)
+
+        def process_update_check_complete_message(
+            self, update_check_result: UpdateCheckResult
+        ):
+            update_check_title = "Update Check"
+            if (
+                update_check_result.latest_version is None
+                or update_check_result.error_message is not None
+            ):
+                msg = "Unable to do update check!"
+
+                if update_check_result.error_message is not None:
+                    msg += f"\n\n{update_check_result.error_message}"
+
+                messagebox.showerror(update_check_title, msg)
+                return
+
+            if update_check_result.update_available:
+                yn = messagebox.askyesno(
+                    update_check_title,
+                    f"New version {update_check_result.latest_version} is available.\n\nWould you like to open a webpage to view and download the release?",
+                )
+
+                if yn == YES:
+                    webbrowser.open(update_check_result.latest_url)
+                return
+
+            messagebox.showinfo(update_check_title, "You have the latest version")
 
         def process_generation_complete_message(self, template_info: TemplateInfo):
             if len(template_info.error_msgs) > 0:
@@ -282,7 +327,7 @@ def make_preview_app(
             self.reload()
 
         def show_about_message(self):
-            msg = """X-Touch Mini FS2020 Template Maker
+            msg = f"""X-Touch Mini FS2020 Template Maker {VERSION}
 
 Copyright (C) 2023  Chris Speck
 

@@ -29,6 +29,7 @@ jobs:
           python -m pytest tests
       - name: Compile
         run: |
+          python scripts\write_github_build_tag.py
           pip install pyinstaller==5.7.0
           pyinstaller --noconfirm main.spec
           dir

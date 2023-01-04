@@ -10,6 +10,7 @@ a = Analysis(
     binaries=[],
     datas=[
         ('resources', 'resources'),
+        ('build_tag', '.'),
         ('README.md', '.'),
         ('LICENSE', '.'),
     ],
