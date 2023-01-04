@@ -1,17 +1,21 @@
+from queue import Queue
 import shutil
 import tkinter as tk
 from pathlib import Path
-from tkinter import filedialog as fd
+from tkinter import CENTER, Event, filedialog as fd
 from tkinter import messagebox, ttk
 from typing import List, Optional, Union
+from uuid import UUID, uuid4
 
 from PIL import Image, ImageTk
 from win32api import GetSystemMetrics
 
 from template_maker import main
 from template_maker.config import Config
-from template_maker.generator import PNG_DIM
+from template_maker.generator_thread import GeneratorThread
+from template_maker.generator_util import PNG_DIM
 from template_maker.logger import get_logger
+from template_maker.message import Message, MessageType
 from template_maker.template_info import TemplateInfo
 from template_maker import vars
 from template_maker.gui_label_mapping_editor import LabelMappingEditor
@@ -24,14 +28,22 @@ from template_maker.text_mapping import (
 from template_maker.utils import generate_mapping_templates
 
 logger = get_logger()
-GUI_MODE = True
+
+WIDGET_IMAGE_FRAME_NAME = "image_frame"
+WIDGET_PROCESS_PROGRESSBAR_NAME = "processing_progressbar"
+
+MENU_RELOAD_TEXT = "Reload (F5)"
 
 
 def noop():
     pass
 
 
-def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
+def make_preview_app(
+    config: Config,
+    queue: Queue,
+    pending_generation_job_id: UUID,
+) -> tk.Tk:
     screen_width, screen_height = GetSystemMetrics(0), GetSystemMetrics(1)
     image_original_width, image_original_height = PNG_DIM[0], PNG_DIM[1]
 
@@ -42,7 +54,7 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
     class App(tk.Tk):
         def __init__(self):
             super().__init__()
-            self.title("Template preview")
+            self.title("X-Touch Mini FS2020 Template Maker")
             self.geometry("{}x{}".format(window_width, window_height))
 
             self.menubar = tk.Menu(self)
@@ -51,7 +63,7 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
                 label="Open...", command=lambda: self.select_and_load(None)
             )
             self.filemenu.add_command(
-                label="Reload", command=self.reload, state="disabled"
+                label=MENU_RELOAD_TEXT, command=self.reload, state="disabled"
             )
             self.filemenu.add_command(
                 label="Save PNG...", command=self.save_png, state="disabled"
@@ -84,24 +96,76 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
             )
             self.menubar.add_cascade(label="Edit", menu=self.editmenu)
 
+            self.helpmenu = tk.Menu(self.menubar, tearoff=False)
+            self.helpmenu.add_command(
+                label="About",
+                command=self.show_about_message,
+            )
+            self.menubar.add_cascade(label="Help", menu=self.helpmenu)
             self.config(menu=self.menubar)
 
             self.loaded_image_file_path: Optional[Path] = None
             self.current_template_info: Optional[TemplateInfo] = None
 
             self._config = config
+            self.queue = queue
+            self.pending_generation_job_id: Optional[UUID] = pending_generation_job_id
+            self.bind("<F5>", self.reload)
+            self.show_progressbar()
+            self.check_queue()
 
-            if template_info is not None:
-                self.current_template_info = template_info
-                self.load_image(template_info.dest_png)
-                self.check_for_unmapped_labels()
+        def show_progressbar(self):
+            if self.loaded_image_file_path is not None:
+                self.nametowidget(f".{WIDGET_IMAGE_FRAME_NAME}").destroy()
+
+            pb = ttk.Progressbar(
+                self,
+                mode="indeterminate",
+                name=WIDGET_PROCESS_PROGRESSBAR_NAME,
+                maximum=5,
+            )
+            pb.start()
+            pb.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+        def check_queue(self):
+            if not self.queue.empty():
+                msg: Message = self.queue.get_nowait()
+                logger.info(f"Received message {msg}")
+
+                if msg.message_type == MessageType.GENERATION_COMPLETE:
+                    if msg.job_id == self.pending_generation_job_id:
+                        self.pending_generation_job_id = None
+                        logger.info("Loading image...")
+                        self.process_generation_complete_message(
+                            msg.get_template_info()
+                        )
+                    else:
+                        logger.info("Discarding unexpected message")
+
+            self.after(100, self.check_queue)
+
+        def process_generation_complete_message(self, template_info: TemplateInfo):
+            if len(template_info.error_msgs) > 0:
+                msg = "\n".join(template_info.error_msgs)
+                do_error_box("Error parsing aircraft config", msg)
+            self.current_template_info = template_info
+            self.load_image(template_info.dest_png)
+            self.check_for_unmapped_labels()
+
+        def disable_template_loaded_menus(self):
+            self.filemenu.entryconfig(MENU_RELOAD_TEXT, state="disabled")
+            self.filemenu.entryconfig("Save PNG...", state="disabled")
+            self.filemenu.entryconfig("Save SVG...", state="disabled")
 
         def enable_template_loaded_menus(self):
-            self.filemenu.entryconfig("Reload", state="normal")
+            self.filemenu.entryconfig(MENU_RELOAD_TEXT, state="normal")
             self.filemenu.entryconfig("Save PNG...", state="normal")
             self.filemenu.entryconfig("Save SVG...", state="normal")
 
-        def reload(self):
+        def reload(self, _event: Optional[Event] = None):
+            if self.current_template_info is None:
+                return
+
             self.select_and_load(self.current_template_info.filepath)
 
         def select_and_load(self, ac_config: Optional[str]):
@@ -114,13 +178,13 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
                 return
 
             # generate the thing
-            template_info = main.load_mappings_and_run(
-                logger, config, GUI_MODE, ac_config
-            )
-            self.current_template_info = template_info
-            self.load_image(template_info.dest_png)
-
-            self.check_for_unmapped_labels()
+            self.disable_template_loaded_menus()
+            self.show_progressbar()
+            job_id = uuid4()
+            logger.info(f"Submitting generation job {job_id}")
+            self.pending_generation_job_id = job_id
+            t = GeneratorThread(job_id, self.queue, logger, self._config, ac_config)
+            t.start()
 
         def check_for_unmapped_labels(self):
             unmapped_labels = self.current_template_info.gather_unmapped_labels()
@@ -173,17 +237,20 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
             self.reload()
 
         def load_image(self, image_file_path: Path):
-            if self.loaded_image_file_path is not None:
-                self.nametowidget(".image_frame").destroy()
+            self.nametowidget(f"{WIDGET_PROCESS_PROGRESSBAR_NAME}").destroy()
 
             img = Image.open(image_file_path)
             img.thumbnail([window_width, window_height], Image.Resampling.LANCZOS)
             self.python_image = ImageTk.PhotoImage(img)
             frame = ttk.Frame(
-                self, width=window_width, height=window_height, name="image_frame"
+                self,
+                width=window_width,
+                height=window_height,
+                name=WIDGET_IMAGE_FRAME_NAME,
             )
             frame.pack()
-            ttk.Label(frame, image=self.python_image).pack(fill="both", expand=True)
+            label = ttk.Label(frame, image=self.python_image)
+            label.pack(fill="both", expand=True)
             self.loaded_image_file_path = image_file_path
             self.enable_template_loaded_menus()
 
@@ -213,6 +280,22 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
             self._config.remove_unrecognized = self.desired_blank_setting.get()
             self._config.save()
             self.reload()
+
+        def show_about_message(self):
+            msg = """X-Touch Mini FS2020 Template Maker
+
+Copyright (C) 2023  Chris Speck
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+            """
+            messagebox.showinfo(
+                "About",
+                msg,
+            )
 
     return App
 

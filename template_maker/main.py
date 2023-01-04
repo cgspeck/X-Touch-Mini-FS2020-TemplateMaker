@@ -1,20 +1,17 @@
 import argparse
-from logging import Logger
+from queue import Queue
 import sys
-import time
 from pathlib import Path
+from uuid import uuid4
 
-from template_maker import aircraft_config, gui
+from template_maker import gui
 from template_maker.config import Config
+from template_maker.errors import PrerequsitesNotFoundException
+from template_maker.generator_thread import GeneratorThread
 
-from template_maker.generator import generate_svgstr, svg_to_png
 from template_maker.logger import setup_logger
-from template_maker.template_info import TemplateInfo
-from template_maker.text_mapping import load_mappings
-from template_maker.vars import output_path
 
 logger = setup_logger()
-config = Config.load()
 
 
 def create_parser():
@@ -33,59 +30,27 @@ def create_parser():
     return parser
 
 
-def run_generator(template_info: TemplateInfo):
-    svgstr = generate_svgstr(template_info.buttons, template_info.encoders)
-    logger.info(f"Writing {template_info.dest_svg}")
-
-    if not output_path.exists():
-        output_path.mkdir(parents=True)
-
-    Path(template_info.dest_svg).write_text(svgstr)
-
-    logger.info(f"Writing {template_info.dest_png}")
-    svg_to_png(svgstr, template_info.dest_png, config.inkscape_path)
-
-
-def load_mappings_and_run(
-    logger: Logger, config: Config, gui_mode: bool, ac_config: Path
-):
-    mappings = load_mappings()
-    logger.info(f"Loading '{ac_config}'")
-    template_info = parse_ac_config_and_apply_mappings(
-        ac_config, mappings, config.remove_unrecognized
-    )
-
-    if len(template_info.error_msgs) > 0:
-        for m in template_info.error_msgs:
-            logger.error(m)
-
-        if gui_mode:
-            msg = "\n".join(template_info.error_msgs)
-            gui.do_error_box("Error parsing aircraft config", msg)
-
-    fn = f"{int(time.time())}"
-    template_info.dest_svg = Path(output_path, f"{fn}.svg")
-    template_info.dest_png = Path(output_path, f"{fn}.png")
-
-    run_generator(template_info)
-    return template_info
-
-
-def parse_ac_config_and_apply_mappings(ac_config, mappings, blank_unrecognized: bool):
-    template_info = aircraft_config.parse_aircraft_config(ac_config)
-    template_info.apply_template_mappings(mappings, blank_unrecognized)
-    return template_info
-
-
 if __name__ == "__main__":
     parser = create_parser()
     args = parser.parse_args()
     gui_mode = False
     ac_config = None
 
-    if args.config is None:
+    if args.config is None or args.preview == True:
         gui_mode = True
-        ac_config = gui.select_aircraft_config(config.xtouch_mini_fs2020_aircraft_path)
+
+    try:
+        prog_cfg = Config.load()
+    except PrerequsitesNotFoundException as err:
+        print(err)
+        if gui_mode:
+            gui.do_error_box("Missing Prerequisites", str(err))
+        sys.exit(1)
+
+    if args.config is None:
+        ac_config = gui.select_aircraft_config(
+            prog_cfg.xtouch_mini_fs2020_aircraft_path
+        )
         if ac_config is None:
             logger.info("No aircraft config selected")
             sys.exit()
@@ -94,8 +59,14 @@ if __name__ == "__main__":
     else:
         ac_config = Path(args.config)
 
-    template_info = load_mappings_and_run(logger, config, gui_mode, ac_config)
+    job_id = uuid4()
+    q = Queue()
+    t = GeneratorThread(job_id, q, logger, prog_cfg, ac_config)
+    t.start()
 
     if gui_mode or args.preview:
-        app = gui.make_preview_app(config, template_info)()
+        app = gui.make_preview_app(prog_cfg, q, job_id)()
         app.mainloop()
+    else:
+        logger.info("Waiting for generator thread to finish...")
+        t.join()
