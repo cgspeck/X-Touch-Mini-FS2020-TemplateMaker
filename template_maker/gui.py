@@ -2,7 +2,7 @@ from queue import Queue
 import shutil
 import tkinter as tk
 from pathlib import Path
-from tkinter import filedialog as fd
+from tkinter import CENTER, Event, filedialog as fd
 from tkinter import messagebox, ttk
 from typing import List, Optional, Union
 from uuid import UUID, uuid4
@@ -28,7 +28,11 @@ from template_maker.text_mapping import (
 from template_maker.utils import generate_mapping_templates
 
 logger = get_logger()
-GUI_MODE = True
+
+WIDGET_IMAGE_FRAME_NAME = "image_frame"
+WIDGET_PROCESS_PROGRESSBAR_NAME = "processing_progressbar"
+
+MENU_RELOAD_TEXT = "Reload (F5)"
 
 
 def noop():
@@ -59,7 +63,7 @@ def make_preview_app(
                 label="Open...", command=lambda: self.select_and_load(None)
             )
             self.filemenu.add_command(
-                label="Reload", command=self.reload, state="disabled"
+                label=MENU_RELOAD_TEXT, command=self.reload, state="disabled"
             )
             self.filemenu.add_command(
                 label="Save PNG...", command=self.save_png, state="disabled"
@@ -91,7 +95,6 @@ def make_preview_app(
                 variable=self.desired_blank_setting,
             )
             self.menubar.add_cascade(label="Edit", menu=self.editmenu)
-
             self.config(menu=self.menubar)
 
             self.loaded_image_file_path: Optional[Path] = None
@@ -100,7 +103,22 @@ def make_preview_app(
             self._config = config
             self.queue = queue
             self.pending_generation_job_id: Optional[UUID] = pending_generation_job_id
+            self.bind("<F5>", self.reload)
+            self.show_progressbar()
             self.check_queue()
+
+        def show_progressbar(self):
+            if self.loaded_image_file_path is not None:
+                self.nametowidget(f".{WIDGET_IMAGE_FRAME_NAME}").destroy()
+
+            pb = ttk.Progressbar(
+                self,
+                mode="indeterminate",
+                name=WIDGET_PROCESS_PROGRESSBAR_NAME,
+                maximum=5,
+            )
+            pb.start()
+            pb.place(relx=0.5, rely=0.5, anchor=CENTER)
 
         def check_queue(self):
             if not self.queue.empty():
@@ -127,12 +145,20 @@ def make_preview_app(
             self.load_image(template_info.dest_png)
             self.check_for_unmapped_labels()
 
+        def disable_template_loaded_menus(self):
+            self.filemenu.entryconfig(MENU_RELOAD_TEXT, state="disabled")
+            self.filemenu.entryconfig("Save PNG...", state="disabled")
+            self.filemenu.entryconfig("Save SVG...", state="disabled")
+
         def enable_template_loaded_menus(self):
-            self.filemenu.entryconfig("Reload", state="normal")
+            self.filemenu.entryconfig(MENU_RELOAD_TEXT, state="normal")
             self.filemenu.entryconfig("Save PNG...", state="normal")
             self.filemenu.entryconfig("Save SVG...", state="normal")
 
-        def reload(self):
+        def reload(self, _event: Optional[Event] = None):
+            if self.current_template_info is None:
+                return
+
             self.select_and_load(self.current_template_info.filepath)
 
         def select_and_load(self, ac_config: Optional[str]):
@@ -145,7 +171,10 @@ def make_preview_app(
                 return
 
             # generate the thing
+            self.disable_template_loaded_menus()
+            self.show_progressbar()
             job_id = uuid4()
+            logger.info(f"Submitting generation job {job_id}")
             self.pending_generation_job_id = job_id
             t = GeneratorThread(job_id, self.queue, logger, self._config, ac_config)
             t.start()
@@ -201,17 +230,20 @@ def make_preview_app(
             self.reload()
 
         def load_image(self, image_file_path: Path):
-            if self.loaded_image_file_path is not None:
-                self.nametowidget(".image_frame").destroy()
+            self.nametowidget(f"{WIDGET_PROCESS_PROGRESSBAR_NAME}").destroy()
 
             img = Image.open(image_file_path)
             img.thumbnail([window_width, window_height], Image.Resampling.LANCZOS)
             self.python_image = ImageTk.PhotoImage(img)
             frame = ttk.Frame(
-                self, width=window_width, height=window_height, name="image_frame"
+                self,
+                width=window_width,
+                height=window_height,
+                name=WIDGET_IMAGE_FRAME_NAME,
             )
             frame.pack()
-            ttk.Label(frame, image=self.python_image).pack(fill="both", expand=True)
+            label = ttk.Label(frame, image=self.python_image)
+            label.pack(fill="both", expand=True)
             self.loaded_image_file_path = image_file_path
             self.enable_template_loaded_menus()
 

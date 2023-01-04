@@ -38,6 +38,7 @@ class GeneratorThread(Thread):
         self.ac_config = ac_config
 
     def run(self):
+        self.logger.info(f"Generation job started: {self.job_id}")
         res = self.load_mappings_and_run()
         self.queue.put(
             Message(
