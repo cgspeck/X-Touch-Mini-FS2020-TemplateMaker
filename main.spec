@@ -9,7 +9,9 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[
-        ('resources', 'resources')
+        ('resources', 'resources'),
+        ('README.md', '.'),
+        ('LICENSE', '.'),
     ],
     hiddenimports=[],
     hookspath=[],

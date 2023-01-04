@@ -95,6 +95,13 @@ def make_preview_app(
                 variable=self.desired_blank_setting,
             )
             self.menubar.add_cascade(label="Edit", menu=self.editmenu)
+
+            self.helpmenu = tk.Menu(self.menubar, tearoff=False)
+            self.helpmenu.add_command(
+                label="About",
+                command=self.show_about_message,
+            )
+            self.menubar.add_cascade(label="Help", menu=self.helpmenu)
             self.config(menu=self.menubar)
 
             self.loaded_image_file_path: Optional[Path] = None
@@ -273,6 +280,22 @@ def make_preview_app(
             self._config.remove_unrecognized = self.desired_blank_setting.get()
             self._config.save()
             self.reload()
+
+        def show_about_message(self):
+            msg = """X-Touch Mini FS2020 Template Maker
+
+Copyright (C) 2023  Chris Speck
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+            """
+            messagebox.showinfo(
+                "About",
+                msg,
+            )
 
     return App
 

@@ -51,8 +51,12 @@ class Config:
         inkscape_path = cls.locate_file("inkscape.exe")
         logger.info("Looking for X-Touch-Mini-FS2020...")
         xtouch_mini_fs2020_path = cls.locate_file("X-Touch-Mini-FS2020.exe")
+
         if inkscape_path is None or xtouch_mini_fs2020_path is None:
-            raise PrerequsitesNotFoundException()
+            raise PrerequsitesNotFoundException(
+                inkscape_found=inkscape_path is not None,
+                xtouch_fs2020_found=xtouch_mini_fs2020_path is not None,
+            )
 
         memo = cls(
             inkscape_path=inkscape_path,

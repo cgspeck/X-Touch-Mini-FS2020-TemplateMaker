@@ -6,12 +6,12 @@ from uuid import uuid4
 
 from template_maker import gui
 from template_maker.config import Config
+from template_maker.errors import PrerequsitesNotFoundException
 from template_maker.generator_thread import GeneratorThread
 
 from template_maker.logger import setup_logger
 
 logger = setup_logger()
-config = Config.load()
 
 
 def create_parser():
@@ -36,9 +36,21 @@ if __name__ == "__main__":
     gui_mode = False
     ac_config = None
 
-    if args.config is None:
+    if args.config is None or args.preview == True:
         gui_mode = True
-        ac_config = gui.select_aircraft_config(config.xtouch_mini_fs2020_aircraft_path)
+
+    try:
+        prog_cfg = Config.load()
+    except PrerequsitesNotFoundException as err:
+        print(err)
+        if gui_mode:
+            gui.do_error_box("Missing Prerequisites", str(err))
+        sys.exit(1)
+
+    if args.config is None:
+        ac_config = gui.select_aircraft_config(
+            prog_cfg.xtouch_mini_fs2020_aircraft_path
+        )
         if ac_config is None:
             logger.info("No aircraft config selected")
             sys.exit()
@@ -49,11 +61,11 @@ if __name__ == "__main__":
 
     job_id = uuid4()
     q = Queue()
-    t = GeneratorThread(job_id, q, logger, config, ac_config)
+    t = GeneratorThread(job_id, q, logger, prog_cfg, ac_config)
     t.start()
 
     if gui_mode or args.preview:
-        app = gui.make_preview_app(config, q, job_id)()
+        app = gui.make_preview_app(prog_cfg, q, job_id)()
         app.mainloop()
     else:
         logger.info("Waiting for generator thread to finish...")
