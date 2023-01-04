@@ -1,3 +1,4 @@
 dataclasses-json==0.5.7
 Pillow==9.3.0
 pywin32==305
+semver==2.13.0

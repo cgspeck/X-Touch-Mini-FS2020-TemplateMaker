@@ -26,6 +26,7 @@ from template_maker.text_mapping import (
     save_mappings,
 )
 from template_maker.utils import generate_mapping_templates
+from template_maker.version import VERSION
 
 logger = get_logger()
 
@@ -54,7 +55,7 @@ def make_preview_app(
     class App(tk.Tk):
         def __init__(self):
             super().__init__()
-            self.title("X-Touch Mini FS2020 Template Maker")
+            self.title(f"X-Touch Mini FS2020 Template Maker {VERSION}")
             self.geometry("{}x{}".format(window_width, window_height))
 
             self.menubar = tk.Menu(self)
@@ -282,7 +283,7 @@ def make_preview_app(
             self.reload()
 
         def show_about_message(self):
-            msg = """X-Touch Mini FS2020 Template Maker
+            msg = f"""X-Touch Mini FS2020 Template Maker {VERSION}
 
 Copyright (C) 2023  Chris Speck
 
