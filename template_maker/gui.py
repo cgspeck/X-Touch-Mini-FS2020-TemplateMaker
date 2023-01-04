@@ -1,17 +1,21 @@
+from queue import Queue
 import shutil
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog as fd
 from tkinter import messagebox, ttk
 from typing import List, Optional, Union
+from uuid import UUID, uuid4
 
 from PIL import Image, ImageTk
 from win32api import GetSystemMetrics
 
 from template_maker import main
 from template_maker.config import Config
-from template_maker.generator import PNG_DIM
+from template_maker.generator_thread import GeneratorThread
+from template_maker.generator_util import PNG_DIM
 from template_maker.logger import get_logger
+from template_maker.message import Message, MessageType
 from template_maker.template_info import TemplateInfo
 from template_maker import vars
 from template_maker.gui_label_mapping_editor import LabelMappingEditor
@@ -31,7 +35,11 @@ def noop():
     pass
 
 
-def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
+def make_preview_app(
+    config: Config,
+    queue: Queue,
+    pending_generation_job_id: UUID,
+) -> tk.Tk:
     screen_width, screen_height = GetSystemMetrics(0), GetSystemMetrics(1)
     image_original_width, image_original_height = PNG_DIM[0], PNG_DIM[1]
 
@@ -42,7 +50,7 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
     class App(tk.Tk):
         def __init__(self):
             super().__init__()
-            self.title("Template preview")
+            self.title("X-Touch Mini FS2020 Template Maker")
             self.geometry("{}x{}".format(window_width, window_height))
 
             self.menubar = tk.Menu(self)
@@ -90,11 +98,34 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
             self.current_template_info: Optional[TemplateInfo] = None
 
             self._config = config
+            self.queue = queue
+            self.pending_generation_job_id: Optional[UUID] = pending_generation_job_id
+            self.check_queue()
 
-            if template_info is not None:
-                self.current_template_info = template_info
-                self.load_image(template_info.dest_png)
-                self.check_for_unmapped_labels()
+        def check_queue(self):
+            if not self.queue.empty():
+                msg: Message = self.queue.get_nowait()
+                logger.info(f"Received message {msg}")
+
+                if msg.message_type == MessageType.GENERATION_COMPLETE:
+                    if msg.job_id == self.pending_generation_job_id:
+                        self.pending_generation_job_id = None
+                        logger.info("Loading image...")
+                        self.process_generation_complete_message(
+                            msg.get_template_info()
+                        )
+                    else:
+                        logger.info("Discarding unexpected message")
+
+            self.after(100, self.check_queue)
+
+        def process_generation_complete_message(self, template_info: TemplateInfo):
+            if len(template_info.error_msgs) > 0:
+                msg = "\n".join(template_info.error_msgs)
+                do_error_box("Error parsing aircraft config", msg)
+            self.current_template_info = template_info
+            self.load_image(template_info.dest_png)
+            self.check_for_unmapped_labels()
 
         def enable_template_loaded_menus(self):
             self.filemenu.entryconfig("Reload", state="normal")
@@ -114,13 +145,10 @@ def make_preview_app(config: Config, template_info: TemplateInfo) -> tk.Tk:
                 return
 
             # generate the thing
-            template_info = main.load_mappings_and_run(
-                logger, config, GUI_MODE, ac_config
-            )
-            self.current_template_info = template_info
-            self.load_image(template_info.dest_png)
-
-            self.check_for_unmapped_labels()
+            job_id = uuid4()
+            self.pending_generation_job_id = job_id
+            t = GeneratorThread(job_id, self.queue, logger, self._config, ac_config)
+            t.start()
 
         def check_for_unmapped_labels(self):
             unmapped_labels = self.current_template_info.gather_unmapped_labels()

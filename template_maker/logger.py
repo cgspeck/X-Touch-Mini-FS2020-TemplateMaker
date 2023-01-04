@@ -5,8 +5,9 @@ def get_logger() -> logging.Logger:
     return logging.getLogger("template-maker")
 
 
-def setup_logger():
-    logger = get_logger()
+def setup_logger() -> logging.Logger:
+    logger: logging.Logger = get_logger()
+    logger.handlers.clear()
     logger.setLevel(logging.INFO)
     ch = logging.StreamHandler()
     ch.setLevel(logging.INFO)

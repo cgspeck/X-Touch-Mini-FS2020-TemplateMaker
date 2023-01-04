@@ -1,10 +1,9 @@
 from pathlib import Path
-from typing import List
 import pytest
 from template_maker.button import Button
 from template_maker.encoder import Encoder
 
-from template_maker.generator import generate_svgstr
+from template_maker.generator_util import generate_svgstr
 from template_maker.label import Label
 
 EXPECTED_SVG_HAPPY_PATH = Path("tests", "data", "expected_svg_happy_path.svg")
