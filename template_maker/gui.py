@@ -110,6 +110,7 @@ def make_preview_app(
             )
             self.menubar.add_cascade(label="Help", menu=self.helpmenu)
             self.config(menu=self.menubar)
+            self.resizable(False, False)
 
             self.loaded_image_file_path: Optional[Path] = None
             self.current_template_info: Optional[TemplateInfo] = None
@@ -246,9 +247,9 @@ def make_preview_app(
             if choice == "no":
                 return
 
-            self.show_label_mapping_editor()
+            self.show_label_mapping_editor(True)
 
-        def show_label_mapping_editor(self):
+        def show_label_mapping_editor(self, initially_filtered: bool = False):
             mappings = load_mappings()
             mappings.extend(
                 generate_mapping_templates(
@@ -256,7 +257,12 @@ def make_preview_app(
                 )
             )
             mappings.sort()
-            LabelMappingEditor(self, self.save_mappings_and_reload, mappings)
+            LabelMappingEditor(
+                self,
+                save_callback=self.save_mappings_and_reload,
+                mappings=mappings,
+                initially_filtered=initially_filtered,
+            )
 
         def save_mappings_and_reload(self, updated_mappings: List[TextMapping]):
             selected: List[TextMapping] = []
