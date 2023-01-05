@@ -5,3 +5,5 @@ out
 build/
 dist/
 build_tag
+scratch/
+versionfile.txt

@@ -5,6 +5,7 @@ from template_maker.encoder import Encoder
 
 from template_maker.generator_util import generate_svgstr
 from template_maker.label import Label
+from template_maker.text_mapping import sanitise_replacement
 
 EXPECTED_SVG_HAPPY_PATH = Path("tests", "data", "expected_svg_happy_path.svg")
 EXPECTED_SVG_NO_DATA_PATH = Path("tests", "data", "expected_svg_no_data.svg")
@@ -114,7 +115,9 @@ def test_generate_svgstr_happy_path(expected_svg_happy: str):
         Button(
             index=11,
             layer_a_text=Label(
-                original="AUTO_THROTTLE_ARM", display="A/THR", replaced=True
+                original="AUTO_THROTTLE_ARM",
+                display=sanitise_replacement("A/THR"),
+                replaced=True,
             ),
         ),
         Button(
@@ -209,7 +212,9 @@ def test_generate_svgstr_happy_path(expected_svg_happy: str):
                 original="{alternate}", display="", replaced=True
             ),
             layer_a_tertiary_text=Label(
-                original="COM_STBY_RADIO_SWAP", display="<->", replaced=True
+                original="COM_STBY_RADIO_SWAP",
+                display=sanitise_replacement("<->"),
+                replaced=True,
             ),
         ),
         Encoder(
@@ -221,7 +226,9 @@ def test_generate_svgstr_happy_path(expected_svg_happy: str):
                 original="{alternate}", display="", replaced=True
             ),
             layer_a_tertiary_text=Label(
-                original="NAV1_RADIO_SWAP", display="<->", replaced=True
+                original="NAV1_RADIO_SWAP",
+                display=sanitise_replacement("<->"),
+                replaced=True,
             ),
         ),
     ]

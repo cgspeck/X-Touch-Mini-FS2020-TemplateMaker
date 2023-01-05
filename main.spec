@@ -13,6 +13,8 @@ a = Analysis(
         ('build_tag', '.'),
         ('README.md', '.'),
         ('LICENSE', '.'),
+        ('tests\data\config_generic_ap.json', 'examples'),
+        ('scratch\config_generic_ap.svg', 'examples'),
     ],
     hiddenimports=[],
     hookspath=[],
@@ -43,6 +45,7 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
     icon=['icon.ico'],
+    version='versionfile.txt',
 )
 coll = COLLECT(
     exe,
