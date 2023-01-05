@@ -31,7 +31,9 @@ jobs:
         run: |
           python scripts\copy_example_output.py
           python scripts\write_github_build_tag.py
+          pip install pyinstaller_versionfile==2.1.1
           pip install pyinstaller==5.7.0
+          python -m scripts.make_version_file
           pyinstaller --noconfirm main.spec
           dir
           dir dist

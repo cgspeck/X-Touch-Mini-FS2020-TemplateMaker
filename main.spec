@@ -45,6 +45,7 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
     icon=['icon.ico'],
+    version='versionfile.txt',
 )
 coll = COLLECT(
     exe,
