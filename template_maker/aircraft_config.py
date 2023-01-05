@@ -87,6 +87,12 @@ def parse_aircraft_config(filepath: Path) -> TemplateInfo:
                     encoder_blk.get("event_long_press", None)
                 )
 
+                if tertiary_text == secondary_text or tertiary_text == primary_text:
+                    tertiary_text = None
+
+                if secondary_text == primary_text:
+                    secondary_text = None
+
                 encoders[list_index].layer_a_primary_text = Label(primary_text)
                 encoders[list_index].layer_a_secondary_text = Label(secondary_text)
                 encoders[list_index].layer_a_tertiary_text = Label(tertiary_text)
