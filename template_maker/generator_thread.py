@@ -82,5 +82,6 @@ class GeneratorThread(Thread):
         self, mappings: List[TextMapping], blank_unrecognized: bool
     ) -> TemplateInfo:
         template_info = aircraft_config.parse_aircraft_config(self.ac_config)
-        template_info.apply_template_mappings(mappings, blank_unrecognized)
+        template_info.mappings = mappings
+        template_info.apply_template_mappings(blank_unrecognized)
         return template_info

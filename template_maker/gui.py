@@ -250,7 +250,11 @@ def make_preview_app(
             self.show_label_mapping_editor(True)
 
         def show_label_mapping_editor(self, initially_filtered: bool = False):
-            mappings = load_mappings()
+            if self.check_for_unmapped_labels is not None:
+                mappings = self.current_template_info.mappings
+            else:
+                mappings = load_mappings()
+
             mappings.extend(
                 generate_mapping_templates(
                     self.current_template_info.gather_unmapped_labels()
