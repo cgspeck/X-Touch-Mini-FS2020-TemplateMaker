@@ -20,11 +20,38 @@ encoder_secondary_font_size = 5
 
 
 @dataclass
+class EncoderLabels(DataClassJsonMixin):
+    primary: Optional[Label] = None
+    secondary: Optional[Label] = None
+    tertiary: Optional[Label] = None
+
+    def apply_mappings(self, mappings: List[TextMapping], blank_unrecognized: bool):
+        if self.primary is not None:
+            self.primary.apply_mappings(mappings, blank_unrecognized=blank_unrecognized)
+
+        if self.secondary is not None:
+            self.secondary.apply_mappings(
+                mappings, blank_unrecognized=blank_unrecognized
+            )
+
+        if self.tertiary is not None:
+            self.tertiary.apply_mappings(
+                mappings, blank_unrecognized=blank_unrecognized
+            )
+
+    def gather_unmapped_labels(self) -> List[Label]:
+        memo = []
+        memo.extend(gather_unmapped_label(self, "primary"))
+        memo.extend(gather_unmapped_label(self, "secondary"))
+        memo.extend(gather_unmapped_label(self, "tertiary"))
+        return memo
+
+
+@dataclass
 class Encoder(DataClassJsonMixin):
     index: int
-    layer_a_primary_text: Optional[Label] = None
-    layer_a_secondary_text: Optional[Label] = None
-    layer_a_tertiary_text: Optional[Label] = None
+    layer_a: Optional[EncoderLabels] = None
+    layer_b: Optional[EncoderLabels] = None
 
     def __post_init__(self):
         if self.index < 1 or self.index > 8:
@@ -35,52 +62,50 @@ class Encoder(DataClassJsonMixin):
     def apply_mappings(
         self, mappings: List[TextMapping], blank_unrecognized: bool
     ) -> None:
-        if self.layer_a_primary_text is not None:
-            self.layer_a_primary_text.apply_mappings(mappings, blank_unrecognized)
+        if self.layer_a is not None:
+            self.layer_a.apply_mappings(mappings, blank_unrecognized)
 
-        if self.layer_a_secondary_text is not None:
-            self.layer_a_secondary_text.apply_mappings(mappings, blank_unrecognized)
-
-        if self.layer_a_tertiary_text is not None:
-            self.layer_a_tertiary_text.apply_mappings(mappings, blank_unrecognized)
+        if self.layer_b is not None:
+            self.layer_b.apply_mappings(mappings, blank_unrecognized)
 
     def emit_mask(self) -> str:
         return f'<circle cx="{self.mid_x}" cy="{encoder_y_origin + encoder_rad}" r="{encoder_rad}" fill="black" />\n'
 
     def _emit_secondary_tertiary_text(self) -> str:
-        secondary_text = None
-        tertiary_text = None
+        secondary = None
+        tertiary = None
         memo = ""
 
-        if (
-            self.layer_a_secondary_text is not None
-            and self.layer_a_secondary_text.display_text_has_content
-        ):
-            secondary_text = self.layer_a_secondary_text.display
+        layer_a = self.layer_a
 
-        if (
-            self.layer_a_tertiary_text is not None
-            and self.layer_a_tertiary_text.display_text_has_content
-        ):
-            tertiary_text = self.layer_a_tertiary_text.display
+        if layer_a is None:
+            return memo
 
-        if secondary_text is not None and tertiary_text is not None:
-            memo = f'<text x="{self.mid_x}" y="{encoder_y_secondary_text}" font-size="{encoder_secondary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{secondary_text} ({tertiary_text})</text>\n'
-        elif secondary_text is not None:
-            memo = f'<text x="{self.mid_x}" y="{encoder_y_secondary_text}" font-size="{encoder_secondary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{secondary_text}</text>\n'
-        elif tertiary_text is not None:
-            memo = f'<text x="{self.mid_x}" y="{encoder_y_secondary_text}" font-size="{encoder_secondary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{tertiary_text}</text>\n'
+        if layer_a.secondary is not None and layer_a.secondary.display_text_has_content:
+            secondary = layer_a.secondary.display
+
+        if layer_a.tertiary is not None and layer_a.tertiary.display_text_has_content:
+            tertiary = layer_a.tertiary.display
+
+        if secondary is not None and tertiary is not None:
+            memo = f'<text x="{self.mid_x}" y="{encoder_y_secondary_text}" font-size="{encoder_secondary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{secondary} ({tertiary})</text>\n'
+        elif secondary is not None:
+            memo = f'<text x="{self.mid_x}" y="{encoder_y_secondary_text}" font-size="{encoder_secondary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{secondary}</text>\n'
+        elif tertiary is not None:
+            memo = f'<text x="{self.mid_x}" y="{encoder_y_secondary_text}" font-size="{encoder_secondary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{tertiary}</text>\n'
 
         return memo
 
     def emit_text(self) -> str:
         memo = ""
+        layer_a = self.layer_a
 
         if (
-            self.layer_a_primary_text is not None
-            and self.layer_a_primary_text.display_text_has_content
+            layer_a is not None
+            and layer_a.primary is not None
+            and layer_a.primary.display_text_has_content
         ):
-            memo += f'<text x="{self.mid_x}" y="{encoder_y_primary_text}" font-size="{encoder_primary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a_primary_text.display or ""}</text>\n'
+            memo += f'<text x="{self.mid_x}" y="{encoder_y_primary_text}" font-size="{encoder_primary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{layer_a.primary.display}</text>\n'
 
         memo += self._emit_secondary_tertiary_text()
 
@@ -88,7 +113,9 @@ class Encoder(DataClassJsonMixin):
 
     def gather_unmapped_labels(self) -> List[Label]:
         memo = []
-        memo.extend(gather_unmapped_label(self, "layer_a_primary_text"))
-        memo.extend(gather_unmapped_label(self, "layer_a_secondary_text"))
-        memo.extend(gather_unmapped_label(self, "layer_a_tertiary_text"))
+        if self.layer_a is not None:
+            memo.extend(self.layer_a.gather_unmapped_labels())
+
+        if self.layer_b is not None:
+            memo.extend(self.layer_b.gather_unmapped_labels())
         return memo

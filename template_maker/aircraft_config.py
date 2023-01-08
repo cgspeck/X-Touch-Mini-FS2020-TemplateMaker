@@ -2,10 +2,10 @@ from pathlib import Path
 import json
 from typing import Any, List, Mapping, Optional, Union
 
-from template_maker.button import Button
+from template_maker.button import Button, ButtonLabels
 from template_maker.label import Label
 from template_maker.template_info import TemplateInfo
-from template_maker.encoder import Encoder
+from template_maker.encoder import Encoder, EncoderLabels
 
 
 def parse_event_press(
@@ -96,9 +96,12 @@ def parse_aircraft_config(filepath: Path) -> TemplateInfo:
                 if secondary_text == primary_text:
                     secondary_text = None
 
-                encoders[list_index].layer_a_primary_text = Label(primary_text)
-                encoders[list_index].layer_a_secondary_text = Label(secondary_text)
-                encoders[list_index].layer_a_tertiary_text = Label(tertiary_text)
+                encoders[list_index].layer_a = EncoderLabels(
+                    primary=Label(primary_text),
+                    secondary=Label(secondary_text),
+                    tertiary=Label(tertiary_text),
+                )
+
         else:
             error_msgs.append('"encoders" key not found')
 
@@ -109,8 +112,23 @@ def parse_aircraft_config(filepath: Path) -> TemplateInfo:
                     continue
 
                 list_index = button_index - 1
-                layer_a_text = parse_event_press(button_blk.get("event_press", None))
-                buttons[list_index].layer_a_text = Label(layer_a_text)
+                primary_text = parse_event_press(button_blk.get("event_press", None))
+
+                if primary_text is None:
+                    primary_text = parse_event_press(
+                        button_blk.get("event_short_press", None)
+                    )
+
+                secondary_text = parse_event_press(
+                    button_blk.get("event_long_press", None)
+                )
+
+                if secondary_text == primary_text:
+                    secondary_text = None
+
+                buttons[list_index].layer_a = ButtonLabels(
+                    primary=Label(primary_text), secondary=Label(secondary_text)
+                )
         else:
             error_msgs.append('"buttons" key not found')
 

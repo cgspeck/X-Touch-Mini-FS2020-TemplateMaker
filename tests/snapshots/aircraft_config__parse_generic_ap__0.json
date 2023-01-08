@@ -2,277 +2,429 @@
   "buttons": [
     {
       "index": 1,
-      "layer_a_text": {
-        "original": "TOGGLE_FLIGHT_DIRECTOR",
-        "display": null,
-        "replaced": false
-      }
+      "layer_a": {
+        "primary": {
+          "original": "TOGGLE_FLIGHT_DIRECTOR",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
+      },
+      "layer_b": null
     },
     {
       "index": 2,
-      "layer_a_text": {
-        "original": "AP_HDG_HOLD",
-        "display": null,
-        "replaced": false
-      }
+      "layer_a": {
+        "primary": {
+          "original": "AP_HDG_HOLD",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
+      },
+      "layer_b": null
     },
     {
       "index": 3,
-      "layer_a_text": {
-        "original": "AP_AIRSPEED_HOLD",
-        "display": null,
-        "replaced": false
-      }
+      "layer_a": {
+        "primary": {
+          "original": "AP_AIRSPEED_HOLD",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
+      },
+      "layer_b": null
     },
     {
       "index": 4,
-      "layer_a_text": {
-        "original": "AP_ALT_HOLD",
-        "display": null,
-        "replaced": false
-      }
+      "layer_a": {
+        "primary": {
+          "original": "AP_ALT_HOLD",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
+      },
+      "layer_b": null
     },
     {
       "index": 5,
-      "layer_a_text": {
-        "original": "AP_VS_HOLD",
-        "display": null,
-        "replaced": false
-      }
+      "layer_a": {
+        "primary": {
+          "original": "AP_VS_HOLD",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
+      },
+      "layer_b": null
     },
     {
       "index": 6,
-      "layer_a_text": {
-        "original": "AP_BC_HOLD",
-        "display": null,
-        "replaced": false
-      }
+      "layer_a": {
+        "primary": {
+          "original": "AP_BC_HOLD",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
+      },
+      "layer_b": null
     },
     {
       "index": 7,
-      "layer_a_text": {
-        "original": "AUTO_THROTTLE_TO_GA",
-        "display": null,
-        "replaced": false
-      }
+      "layer_a": {
+        "primary": {
+          "original": "AUTO_THROTTLE_TO_GA",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
+      },
+      "layer_b": null
     },
     {
       "index": 8,
-      "layer_a_text": {
-        "original": null,
-        "display": null,
-        "replaced": false
-      }
+      "layer_a": {
+        "primary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
+      },
+      "layer_b": null
     },
     {
       "index": 9,
-      "layer_a_text": {
-        "original": "AP_MASTER",
-        "display": null,
-        "replaced": false
-      }
+      "layer_a": {
+        "primary": {
+          "original": "AP_MASTER",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
+      },
+      "layer_b": null
     },
     {
       "index": 10,
-      "layer_a_text": {
-        "original": "AP_NAV1_HOLD",
-        "display": null,
-        "replaced": false
-      }
+      "layer_a": {
+        "primary": {
+          "original": "AP_NAV1_HOLD",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
+      },
+      "layer_b": null
     },
     {
       "index": 11,
-      "layer_a_text": {
-        "original": "AUTO_THROTTLE_ARM",
-        "display": null,
-        "replaced": false
-      }
+      "layer_a": {
+        "primary": {
+          "original": "AUTO_THROTTLE_ARM",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
+      },
+      "layer_b": null
     },
     {
       "index": 12,
-      "layer_a_text": {
-        "original": "FLIGHT_LEVEL_CHANGE",
-        "display": null,
-        "replaced": false
-      }
+      "layer_a": {
+        "primary": {
+          "original": "FLIGHT_LEVEL_CHANGE",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
+      },
+      "layer_b": null
     },
     {
       "index": 13,
-      "layer_a_text": {
-        "original": "AP_LOC_HOLD",
-        "display": null,
-        "replaced": false
-      }
+      "layer_a": {
+        "primary": {
+          "original": "AP_LOC_HOLD",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
+      },
+      "layer_b": null
     },
     {
       "index": 14,
-      "layer_a_text": {
-        "original": "AP_APR_HOLD",
-        "display": null,
-        "replaced": false
-      }
+      "layer_a": {
+        "primary": {
+          "original": "AP_APR_HOLD",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
+      },
+      "layer_b": null
     },
     {
       "index": 15,
-      "layer_a_text": {
-        "original": "YAW_DAMPER_TOGGLE",
-        "display": null,
-        "replaced": false
-      }
+      "layer_a": {
+        "primary": {
+          "original": "YAW_DAMPER_TOGGLE",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
+      },
+      "layer_b": null
     },
     {
       "index": 16,
-      "layer_a_text": {
-        "original": null,
-        "display": null,
-        "replaced": false
-      }
+      "layer_a": {
+        "primary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
+      },
+      "layer_b": null
     }
   ],
   "encoders": [
     {
       "index": 1,
-      "layer_a_primary_text": {
-        "original": "VOR1_OBI_INC",
-        "display": null,
-        "replaced": false
+      "layer_a": {
+        "primary": {
+          "original": "VOR1_OBI_INC",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": "{alternate}",
+          "display": null,
+          "replaced": false
+        },
+        "tertiary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
       },
-      "layer_a_secondary_text": {
-        "original": "{alternate}",
-        "display": null,
-        "replaced": false
-      },
-      "layer_a_tertiary_text": {
-        "original": null,
-        "display": null,
-        "replaced": false
-      }
+      "layer_b": null
     },
     {
       "index": 2,
-      "layer_a_primary_text": {
-        "original": "HEADING_BUG_INC",
-        "display": null,
-        "replaced": false
+      "layer_a": {
+        "primary": {
+          "original": "HEADING_BUG_INC",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": "HEADING_BUG_SET",
+          "display": null,
+          "replaced": false
+        },
+        "tertiary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
       },
-      "layer_a_secondary_text": {
-        "original": "HEADING_BUG_SET",
-        "display": null,
-        "replaced": false
-      },
-      "layer_a_tertiary_text": {
-        "original": null,
-        "display": null,
-        "replaced": false
-      }
+      "layer_b": null
     },
     {
       "index": 3,
-      "layer_a_primary_text": {
-        "original": "AP_SPD_VAR_INC",
-        "display": null,
-        "replaced": false
+      "layer_a": {
+        "primary": {
+          "original": "AP_SPD_VAR_INC",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        },
+        "tertiary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
       },
-      "layer_a_secondary_text": {
-        "original": null,
-        "display": null,
-        "replaced": false
-      },
-      "layer_a_tertiary_text": {
-        "original": null,
-        "display": null,
-        "replaced": false
-      }
+      "layer_b": null
     },
     {
       "index": 4,
-      "layer_a_primary_text": {
-        "original": "AP_ALT_VAR_INC",
-        "display": null,
-        "replaced": false
+      "layer_a": {
+        "primary": {
+          "original": "AP_ALT_VAR_INC",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        },
+        "tertiary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
       },
-      "layer_a_secondary_text": {
-        "original": null,
-        "display": null,
-        "replaced": false
-      },
-      "layer_a_tertiary_text": {
-        "original": null,
-        "display": null,
-        "replaced": false
-      }
+      "layer_b": null
     },
     {
       "index": 5,
-      "layer_a_primary_text": {
-        "original": "AP_VS_VAR_INC",
-        "display": null,
-        "replaced": false
+      "layer_a": {
+        "primary": {
+          "original": "AP_VS_VAR_INC",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": "AP_ATT_HOLD",
+          "display": null,
+          "replaced": false
+        },
+        "tertiary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
       },
-      "layer_a_secondary_text": {
-        "original": "AP_ATT_HOLD",
-        "display": null,
-        "replaced": false
-      },
-      "layer_a_tertiary_text": {
-        "original": null,
-        "display": null,
-        "replaced": false
-      }
+      "layer_b": null
     },
     {
       "index": 6,
-      "layer_a_primary_text": {
-        "original": "KOHLSMAN_INC",
-        "display": null,
-        "replaced": false
+      "layer_a": {
+        "primary": {
+          "original": "KOHLSMAN_INC",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": "KOHLSMAN_SET",
+          "display": null,
+          "replaced": false
+        },
+        "tertiary": {
+          "original": null,
+          "display": null,
+          "replaced": false
+        }
       },
-      "layer_a_secondary_text": {
-        "original": "KOHLSMAN_SET",
-        "display": null,
-        "replaced": false
-      },
-      "layer_a_tertiary_text": {
-        "original": null,
-        "display": null,
-        "replaced": false
-      }
+      "layer_b": null
     },
     {
       "index": 7,
-      "layer_a_primary_text": {
-        "original": "COM_RADIO_WHOLE_INC",
-        "display": null,
-        "replaced": false
+      "layer_a": {
+        "primary": {
+          "original": "COM_RADIO_WHOLE_INC",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": "{alternate}",
+          "display": null,
+          "replaced": false
+        },
+        "tertiary": {
+          "original": "COM_STBY_RADIO_SWAP",
+          "display": null,
+          "replaced": false
+        }
       },
-      "layer_a_secondary_text": {
-        "original": "{alternate}",
-        "display": null,
-        "replaced": false
-      },
-      "layer_a_tertiary_text": {
-        "original": "COM_STBY_RADIO_SWAP",
-        "display": null,
-        "replaced": false
-      }
+      "layer_b": null
     },
     {
       "index": 8,
-      "layer_a_primary_text": {
-        "original": "NAV1_RADIO_WHOLE_INC",
-        "display": null,
-        "replaced": false
+      "layer_a": {
+        "primary": {
+          "original": "NAV1_RADIO_WHOLE_INC",
+          "display": null,
+          "replaced": false
+        },
+        "secondary": {
+          "original": "{alternate}",
+          "display": null,
+          "replaced": false
+        },
+        "tertiary": {
+          "original": "NAV1_RADIO_SWAP",
+          "display": null,
+          "replaced": false
+        }
       },
-      "layer_a_secondary_text": {
-        "original": "{alternate}",
-        "display": null,
-        "replaced": false
-      },
-      "layer_a_tertiary_text": {
-        "original": "NAV1_RADIO_SWAP",
-        "display": null,
-        "replaced": false
-      }
+      "layer_b": null
     }
   ],
   "filepath": "tests\\data\\config_generic_ap.json",
