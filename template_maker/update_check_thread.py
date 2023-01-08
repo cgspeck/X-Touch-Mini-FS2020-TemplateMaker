@@ -1,7 +1,7 @@
 from logging import Logger
 from queue import Queue
 from threading import Thread
-from typing import Optional
+from typing import Any, Optional
 from uuid import UUID
 
 
@@ -27,7 +27,7 @@ class UpdateCheckThread(Thread):
         my_version: VersionInfo,
         group: None = None,
         name: Optional[str] = None,
-        daemon: Optional[any] = None,
+        daemon: Optional[Any] = None,
     ) -> None:
         super().__init__(
             group=group, target=None, name=name, args=(), kwargs=None, daemon=daemon

@@ -46,7 +46,7 @@ def make_preview_app(
     config: Config,
     queue: Queue,
     pending_generation_job_id: UUID,
-) -> tk.Tk:
+) -> "App":
     screen_width, screen_height = GetSystemMetrics(0), GetSystemMetrics(1)
     image_original_width, image_original_height = PNG_DIM[0], PNG_DIM[1]
 
@@ -179,13 +179,21 @@ def make_preview_app(
                 return
 
             if update_check_result.update_available:
+                msg = f"New version {update_check_result.latest_version} is available."
+                latest_url = update_check_result.latest_url
+
+                if latest_url is None:
+                    messagebox.showinfo(update_check_title, msg)
+                    return
+
+                msg = f"{msg}\n\nWould you like to open a webpage to view and download the release?"
                 yn = messagebox.askyesno(
                     update_check_title,
-                    f"New version {update_check_result.latest_version} is available.\n\nWould you like to open a webpage to view and download the release?",
+                    msg,
                 )
 
                 if yn == YES:
-                    webbrowser.open(update_check_result.latest_url)
+                    webbrowser.open(latest_url)
                 return
 
             messagebox.showinfo(update_check_title, "You have the latest version")
@@ -195,6 +203,10 @@ def make_preview_app(
                 msg = "\n".join(template_info.error_msgs)
                 do_error_box("Error parsing aircraft config", msg)
             self.current_template_info = template_info
+
+            if template_info.dest_png is None:
+                return
+
             self.load_image(template_info.dest_png)
             self.check_for_unmapped_labels()
 
@@ -214,7 +226,7 @@ def make_preview_app(
 
             self.select_and_load(self.current_template_info.filepath)
 
-        def select_and_load(self, ac_config: Optional[str]):
+        def select_and_load(self, ac_config: Optional[Union[str, Path]]):
             if ac_config is None:
                 ac_config = select_aircraft_config(
                     self._config.xtouch_mini_fs2020_aircraft_path
@@ -223,16 +235,28 @@ def make_preview_app(
             if ac_config is None:
                 return
 
+            if not isinstance(ac_config, Path):
+                ac_config = Path(ac_config)
+
             # generate the thing
             self.disable_template_loaded_menus()
             self.show_progressbar()
             job_id = uuid4()
             logger.info(f"Submitting generation job {job_id}")
             self.pending_generation_job_id = job_id
-            t = GeneratorThread(job_id, self.queue, logger, self._config, ac_config)
+            t = GeneratorThread(
+                job_id=job_id,
+                queue=self.queue,
+                logger=logger,
+                config=self._config,
+                ac_config=ac_config,
+            )
             t.start()
 
         def check_for_unmapped_labels(self):
+            if self.current_template_info is None:
+                return
+
             unmapped_labels = self.current_template_info.gather_unmapped_labels()
 
             if len(unmapped_labels) == 0:
@@ -250,6 +274,9 @@ def make_preview_app(
             self.show_label_mapping_editor(True)
 
         def show_label_mapping_editor(self, initially_filtered: bool = False):
+            if self.current_template_info is None:
+                return
+
             if self.check_for_unmapped_labels is not None:
                 mappings = self.current_template_info.mappings
             else:
@@ -295,7 +322,7 @@ def make_preview_app(
             self.nametowidget(f"{WIDGET_PROCESS_PROGRESSBAR_NAME}").destroy()
 
             img = Image.open(image_file_path)
-            img.thumbnail([window_width, window_height], Image.Resampling.LANCZOS)
+            img.thumbnail((window_width, window_height), Image.Resampling.LANCZOS)
             self.python_image = ImageTk.PhotoImage(img)
             frame = ttk.Frame(
                 self,
@@ -310,9 +337,15 @@ def make_preview_app(
             self.enable_template_loaded_menus()
 
         def save_png(self):
+            if (
+                self.current_template_info is None
+                or self.current_template_info.dest_png is None
+            ):
+                return
+
             fp = save_dialog("PNG files", "png")
             if fp is None:
-                pass
+                return
 
             if fp.suffix.lower() != ".png":
                 fp = fp.parent / (fp.name + ".png")
@@ -321,9 +354,15 @@ def make_preview_app(
             shutil.copy(self.current_template_info.dest_png, fp)
 
         def save_svg(self):
+            if (
+                self.current_template_info is None
+                or self.current_template_info.dest_svg is None
+            ):
+                return
+
             fp = save_dialog("SVG files", "svg")
             if fp is None:
-                pass
+                return
 
             if fp.suffix.lower() != ".svg":
                 fp = fp.parent / (fp.name + ".svg")

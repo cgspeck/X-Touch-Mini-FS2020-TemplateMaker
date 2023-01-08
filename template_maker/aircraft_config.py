@@ -14,13 +14,16 @@ def parse_event_press(
     if blk is None:
         return None
 
-    if type(blk) == str:
+    if isinstance(blk, str):
         return blk
 
-    if type(blk) == list and len(blk) > 0:
+    if isinstance(blk, list) and len(blk) > 0:
         return "_".join(blk)
 
-    return blk.get("event", None)
+    if isinstance(blk, Mapping):
+        return blk.get("event", None)
+
+    return None
 
 
 def parse_aircraft_config(filepath: Path) -> TemplateInfo:

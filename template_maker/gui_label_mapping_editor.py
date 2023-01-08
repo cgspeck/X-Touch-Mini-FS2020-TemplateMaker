@@ -104,7 +104,7 @@ class LabelMappingEditor(tk.Toplevel):
         treeview: ttk.Treeview,
         pattern: str,
         replacement: str,
-        in_use: bool,
+        in_use: str,
         treeview_index: int,
         item_id: str,
     ):
@@ -172,12 +172,12 @@ class LabelMappingEditor(tk.Toplevel):
 
         def update_then_destroy():
             if self.validate_update(
-                treeView,
-                col1Ent.get(),
-                col2Ent.get(),
-                values[2],
-                current_index,
-                entry_id,
+                treeview=treeView,
+                pattern=col1Ent.get(),
+                replacement=col2Ent.get(),
+                in_use=values[2],
+                treeview_index=current_index,
+                item_id=entry_id,
             ):
                 win.destroy()
 

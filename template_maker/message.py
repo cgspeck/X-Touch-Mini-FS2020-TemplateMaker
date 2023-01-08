@@ -31,6 +31,9 @@ class Message:
                 f"Expected message {MessageType.GENERATION_COMPLETE.name}, got {self.message_type.name}"
             )
 
+        if type(self.payload) != TemplateInfo:
+            raise ValueError
+
         return self.payload
 
     def get_update_check_result(self) -> UpdateCheckResult:
@@ -38,5 +41,8 @@ class Message:
             raise ValueError(
                 f"Expected message {MessageType.UPDATE_CHECK_COMPLETE.name}, got {self.message_type.name}"
             )
+
+        if type(self.payload) != UpdateCheckResult:
+            raise ValueError
 
         return self.payload

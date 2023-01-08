@@ -60,12 +60,12 @@ if __name__ == "__main__":
         ac_config = Path(args.config)
 
     job_id = uuid4()
-    q = Queue()
+    q: Queue = Queue()
     t = GeneratorThread(job_id, q, logger, prog_cfg, ac_config)
     t.start()
 
     if gui_mode or args.preview:
-        app = gui.make_preview_app(prog_cfg, q, job_id)()
+        app = gui.make_preview_app(prog_cfg, q, job_id)
         app.mainloop()
     else:
         logger.info("Waiting for generator thread to finish...")

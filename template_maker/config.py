@@ -74,8 +74,8 @@ class Config:
 
             if "schema_version" in dct:
                 del dct["schema_version"]
-            dct["inkscape_path"]: Path(dct["inkscape_path"])
-            dct["xtouch_mini_fs2020_path"]: Path(dct["xtouch_mini_fs2020_path"])
+            dct["inkscape_path"] = Path(dct["inkscape_path"])
+            dct["xtouch_mini_fs2020_path"] = Path(dct["xtouch_mini_fs2020_path"])
             return cls(**dct)
 
         return cls.create()
