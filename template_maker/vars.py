@@ -9,15 +9,17 @@ if mydocs_path is None:
     CSIDL_PERSONAL = 5
     SHGFP_TYPE_CURRENT = 0
     buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
-    ctypes.windll.shell32.SHGetFolderPathW(None, CSIDL_PERSONAL, None, SHGFP_TYPE_CURRENT, buf)
+    ctypes.windll.shell32.SHGetFolderPathW(
+        None, CSIDL_PERSONAL, None, SHGFP_TYPE_CURRENT, buf
+    )
     mydocs_path = Path(buf.value)
 
-data_path = Path(mydocs_path, 'xtouch-template-maker')
+data_path = Path(mydocs_path, "xtouch-template-maker")
 
 if not data_path.exists():
     data_path.mkdir()
 
-output_path = Path(data_path, 'out')
+output_path = Path(data_path, "out")
 
 if not output_path.exists():
     output_path.mkdir()
@@ -25,7 +27,7 @@ if not output_path.exists():
 resources_path = None
 
 if resources_path is None:
-    resources_path = Path(__file__).parent.parent / 'resources'
+    resources_path = Path(__file__).parent.parent / "resources"
 
 default_mappings = Path(resources_path, "mappings.default.txt")
 
