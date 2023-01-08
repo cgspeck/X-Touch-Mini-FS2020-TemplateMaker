@@ -1,4 +1,4 @@
 call venv/scripts/activate
-black template_maker tests
-mypy template_maker
+black .
+mypy
 python -m pytest -sv tests %*
