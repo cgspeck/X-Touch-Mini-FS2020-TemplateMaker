@@ -3,7 +3,7 @@ from queue import Queue
 from threading import Thread
 import time
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, List, Optional
 from uuid import UUID
 
 from template_maker import aircraft_config
@@ -26,7 +26,7 @@ class GeneratorThread(Thread):
         ac_config: Path,
         group: None = None,
         name: Optional[str] = None,
-        daemon: Optional[any] = None,
+        daemon: Optional[Any] = None,
     ) -> None:
         super().__init__(
             group=group, target=None, name=name, args=(), kwargs=None, daemon=daemon
@@ -73,7 +73,13 @@ class GeneratorThread(Thread):
         if not output_path.exists():
             output_path.mkdir(parents=True)
 
+        if template_info.dest_svg is None:
+            raise ValueError
+
         Path(template_info.dest_svg).write_text(svgstr)
+
+        if template_info.dest_png is None:
+            raise ValueError
 
         self.logger.info(f"Writing {template_info.dest_png}")
         svg_to_png(svgstr, template_info.dest_png, self.config.inkscape_path)
@@ -82,5 +88,6 @@ class GeneratorThread(Thread):
         self, mappings: List[TextMapping], blank_unrecognized: bool
     ) -> TemplateInfo:
         template_info = aircraft_config.parse_aircraft_config(self.ac_config)
-        template_info.apply_template_mappings(mappings, blank_unrecognized)
+        template_info.mappings = mappings
+        template_info.apply_template_mappings(blank_unrecognized)
         return template_info

@@ -58,9 +58,8 @@ test
 
 ## Current limitations
 
-- only processes values for Layer A (since this is all I use)
-
-PRs are welcomed.
+- only processes and displays values for Layer A
+- does not emit secondary button text (`event_long_press`)
 
 ## Inspiration
 

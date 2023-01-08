@@ -18,9 +18,31 @@ button_font_size = 5
 
 
 @dataclass
+class ButtonLabels(DataClassJsonMixin):
+    primary: Optional[Label] = None
+    secondary: Optional[Label] = None
+
+    def apply_mappings(self, mappings: List[TextMapping], blank_unrecognized: bool):
+        if self.primary is not None:
+            self.primary.apply_mappings(mappings, blank_unrecognized=blank_unrecognized)
+
+        if self.secondary is not None:
+            self.secondary.apply_mappings(
+                mappings, blank_unrecognized=blank_unrecognized
+            )
+
+    def gather_unmapped_labels(self) -> List[Label]:
+        memo = []
+        memo.extend(gather_unmapped_label(self, "primary"))
+        memo.extend(gather_unmapped_label(self, "secondary"))
+        return memo
+
+
+@dataclass
 class Button(DataClassJsonMixin):
     index: int
-    layer_a_text: Optional[Label] = None
+    layer_a: Optional[ButtonLabels] = None
+    layer_b: Optional[ButtonLabels] = None
 
     def __post_init__(self):
         if self.index < 1 or self.index > 16:
@@ -43,10 +65,11 @@ class Button(DataClassJsonMixin):
     def apply_mappings(
         self, mappings: List[TextMapping], blank_unrecognized: bool
     ) -> None:
-        if self.layer_a_text is None:
-            return
+        if self.layer_a is not None:
+            self.layer_a.apply_mappings(mappings, blank_unrecognized)
 
-        self.layer_a_text.apply_mappings(mappings, blank_unrecognized)
+        if self.layer_b is not None:
+            self.layer_b.apply_mappings(mappings, blank_unrecognized)
 
     def emit_mask(self) -> str:
         return f'<rect x="{self.x}" y="{self.y}" width="{button_dim[0]}" height="{button_dim[1]}" fill="black" />\n'
@@ -54,10 +77,16 @@ class Button(DataClassJsonMixin):
     def emit_text(self) -> str:
         memo = ""
 
-        if self.layer_a_text is not None:
-            memo += f'<text x="{self.mid_x}" y="{self.text_y}" font-size="{button_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a_text.display or ""}</text>\n'
+        if self.layer_a is not None and self.layer_a.primary is not None:
+            memo += f'<text x="{self.mid_x}" y="{self.text_y}" font-size="{button_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{self.layer_a.primary.display or ""}</text>\n'
 
         return memo
 
     def gather_unmapped_labels(self) -> List[Label]:
-        return gather_unmapped_label(self, "layer_a_text")
+        memo = []
+        if self.layer_a is not None:
+            memo.extend(self.layer_a.gather_unmapped_labels())
+
+        if self.layer_b is not None:
+            memo.extend(self.layer_b.gather_unmapped_labels())
+        return memo

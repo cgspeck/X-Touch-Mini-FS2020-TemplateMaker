@@ -14,6 +14,15 @@ class Label(DataClassJsonMixin):
 
     def __lt__(self, other: Any):
         if type(other) == Label:
+            if self.original is None and other.original:
+                return False
+
+            if self.original is None:
+                return True
+
+            if other.original is None:
+                return False
+
             return self.original < other.original
 
         if type(other) != Label:
