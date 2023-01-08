@@ -21,7 +21,7 @@ def test_parse_generic_ap(config_generic_ap: str, snapshot: SnapshotFixture) -> 
     assert snapshot("json") == actual
 
 
-def test_dedupes_strings(config_a320: str, snapshot: SnapshotFixture) -> None:
+def test_dedupes_strings(config_a320: str) -> None:
     actual = parse_aircraft_config(config_a320)
 
     encoder1 = actual.encoders[0]
