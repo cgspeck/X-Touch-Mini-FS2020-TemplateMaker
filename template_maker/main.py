@@ -4,10 +4,11 @@ import sys
 from pathlib import Path
 from uuid import uuid4
 
-from template_maker import gui
+from template_maker.gui import util as gui_util
 from template_maker.config import Config
 from template_maker.errors import PrerequsitesNotFoundException
 from template_maker.generator_thread import GeneratorThread
+from template_maker.gui.app import App
 
 from template_maker.logger import setup_logger
 
@@ -44,11 +45,11 @@ if __name__ == "__main__":
     except PrerequsitesNotFoundException as err:
         print(err)
         if gui_mode:
-            gui.do_error_box("Missing Prerequisites", str(err))
+            gui_util.do_error_box("Missing Prerequisites", str(err))
         sys.exit(1)
 
     if args.config is None:
-        ac_config = gui.select_aircraft_config(
+        ac_config = gui_util.select_aircraft_config(
             prog_cfg.xtouch_mini_fs2020_aircraft_path
         )
         if ac_config is None:
@@ -65,7 +66,7 @@ if __name__ == "__main__":
     t.start()
 
     if gui_mode or args.preview:
-        app = gui.make_preview_app(prog_cfg, q, job_id)
+        app = App(prog_cfg, q, job_id)
         app.mainloop()
     else:
         logger.info("Waiting for generator thread to finish...")
