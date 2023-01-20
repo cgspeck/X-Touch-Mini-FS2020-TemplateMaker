@@ -3,14 +3,16 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 from re import Pattern
-from typing import Any, List, Optional
+from typing import Any, List
 
 from dataclasses_json import DataClassJsonMixin
 
-
+from template_maker.logger import get_logger
 from template_maker.vars import default_mappings, user_mappings
 
 DEFAULT_REPLACEMENT_TEXT = "SET ME!"
+
+logger = get_logger()
 
 
 @dataclass
@@ -79,4 +81,5 @@ def save_mappings(mappings: List[TextMapping]):
 
 
 def reset_mappings():
+    logger.info(f"Resetting mappings: {user_mappings}")
     user_mappings.write_text(default_mappings.read_text())

@@ -2,8 +2,8 @@ from pathlib import Path
 import shutil
 import tkinter as tk
 from typing import Callable, List, Optional
-from tkinter import CENTER, YES, filedialog as fd
-from tkinter import messagebox, ttk
+from tkinter import filedialog as fd
+from tkinter import messagebox
 
 from template_maker.gui.util import save_dialog
 from template_maker.logger import get_logger
@@ -26,6 +26,20 @@ def backup_mappings(self: tk.Tk):
 
     logger.info(f"Writing {fp}")
     shutil.copy(vars.user_mappings, fp)
+
+
+def confirm_and_reset_mappings(self: tk.Tk, success_cb: Callable[[], None]):
+    message = f"This will replace all custom mappings with the default. Are you sure you want to continue?"
+    choice = messagebox.askquestion(
+        title="Reset user mappings?",
+        message=message,
+    )
+
+    if choice == "no":
+        return
+
+    text_mapping.reset_mappings()
+    success_cb()
 
 
 def import_mappings(self: tk.Tk, success_cb: Callable[[], None]):

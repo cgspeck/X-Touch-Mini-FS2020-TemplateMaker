@@ -27,7 +27,6 @@ from template_maker.template_info import TemplateInfo
 from template_maker.text_mapping import (
     TextMapping,
     load_mappings,
-    reset_mappings,
     save_mappings,
 )
 from template_maker.update_check_thread import UpdateCheckResult, UpdateCheckThread
@@ -46,6 +45,7 @@ MENU_RELOAD_TEXT = "Reload (F5)"
 class App(tk.Tk):
     # attach functions defined in other files
     backup_mappings = gui_mapping_funcs.backup_mappings
+    confirm_and_reset_mappings = gui_mapping_funcs.confirm_and_reset_mappings
     import_mappings = gui_mapping_funcs.import_mappings
 
     def __init__(
@@ -97,7 +97,7 @@ class App(tk.Tk):
         )
         self.mapping_menu.add_command(
             label="Restore default mappings",
-            command=self.confirm_and_reset_mappings,
+            command=lambda: self.confirm_and_reset_mappings(self.reload),
         )
 
         self.desired_blank_setting = tk.BooleanVar(
@@ -314,19 +314,6 @@ class App(tk.Tk):
                 selected.append(m)
 
         save_mappings(selected)
-        self.reload()
-
-    def confirm_and_reset_mappings(self):
-        message = f"This will replace all custom mappings with the default. Are you sure you want to continue?"
-        choice = messagebox.askquestion(
-            title="Reset user mappings?",
-            message=message,
-        )
-
-        if choice == "no":
-            return
-
-        reset_mappings()
         self.reload()
 
     def load_image(self, image_file_path: Path):
