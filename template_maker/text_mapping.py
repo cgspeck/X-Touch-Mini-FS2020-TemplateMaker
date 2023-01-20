@@ -34,7 +34,7 @@ def sanitise_replacement(original: str) -> str:
     return html.escape(original)
 
 
-def _from_disk(fp: Path) -> List[TextMapping]:
+def parse_file(fp: Path) -> List[TextMapping]:
     memo = []
 
     txt = fp.read_text()
@@ -63,7 +63,7 @@ def _from_disk(fp: Path) -> List[TextMapping]:
 def load_mappings() -> List[TextMapping]:
     memo = []
 
-    memo.extend(_from_disk(user_mappings))
+    memo.extend(parse_file(user_mappings))
 
     if len(memo) == 0:
         reset_mappings()

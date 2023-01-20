@@ -15,6 +15,8 @@ from win32api import GetSystemMetrics
 from template_maker.config import Config
 from template_maker.generator_thread import GeneratorThread
 from template_maker.generator_util import PNG_DIM
+
+from template_maker.gui import mapping as gui_mapping_funcs
 from template_maker.gui.util import do_error_box, save_dialog, select_aircraft_config
 from template_maker.gui.label_mapping_editor import LabelMappingEditor
 from template_maker.logger import get_logger
@@ -42,6 +44,10 @@ MENU_RELOAD_TEXT = "Reload (F5)"
 
 
 class App(tk.Tk):
+    # attach functions defined in other files
+    backup_mappings = gui_mapping_funcs.backup_mappings
+    import_mappings = gui_mapping_funcs.import_mappings
+
     def __init__(
         self,
         config: Config,
@@ -60,28 +66,36 @@ class App(tk.Tk):
         self.geometry("{}x{}".format(window_width, window_height))
 
         self.menubar = tk.Menu(self)
-        self.filemenu = tk.Menu(self.menubar, tearoff=False)
-        self.filemenu.add_command(
+        self.file_menu = tk.Menu(self.menubar, tearoff=False)
+        self.file_menu.add_command(
             label="Open...", command=lambda: self.select_and_load(None)
         )
-        self.filemenu.add_command(
+        self.file_menu.add_command(
             label=MENU_RELOAD_TEXT, command=self.reload, state="disabled"
         )
-        self.filemenu.add_command(
+        self.file_menu.add_command(
             label="Save PNG...", command=self.save_png, state="disabled"
         )
-        self.filemenu.add_command(
+        self.file_menu.add_command(
             label="Save SVG...", command=self.save_svg, state="disabled"
         )
-        self.filemenu.add_command(label="Exit", command=self.quit)
-        self.menubar.add_cascade(label="File", menu=self.filemenu)
+        self.file_menu.add_command(label="Exit", command=self.quit)
+        self.menubar.add_cascade(label="File", menu=self.file_menu)
 
-        self.editmenu = tk.Menu(self.menubar, tearoff=False)
-        self.editmenu.add_command(
+        self.mapping_menu = tk.Menu(self.menubar, tearoff=False)
+        self.mapping_menu.add_command(
             label="Manage label mappings...",
             command=self.show_label_mapping_editor,
         )
-        self.editmenu.add_command(
+        self.mapping_menu.add_command(
+            label="Save mappings to file...",
+            command=self.backup_mappings,
+        )
+        self.mapping_menu.add_command(
+            label="Import mappings from file...",
+            command=lambda: self.import_mappings(self.reload),
+        )
+        self.mapping_menu.add_command(
             label="Restore default mappings",
             command=self.confirm_and_reset_mappings,
         )
@@ -89,14 +103,14 @@ class App(tk.Tk):
         self.desired_blank_setting = tk.BooleanVar(
             self, value=config.remove_unrecognized
         )
-        self.editmenu.add_checkbutton(
+        self.mapping_menu.add_checkbutton(
             label="Blank out unrecognized labels",
             command=self.update_blank_setting_and_reload,
             onvalue=True,
             offvalue=False,
             variable=self.desired_blank_setting,
         )
-        self.menubar.add_cascade(label="Edit", menu=self.editmenu)
+        self.menubar.add_cascade(label="Mappings", menu=self.mapping_menu)
 
         self.helpmenu = tk.Menu(self.menubar, tearoff=False)
         self.helpmenu.add_command(
@@ -208,14 +222,14 @@ class App(tk.Tk):
         self.check_for_unmapped_labels()
 
     def disable_template_loaded_menus(self):
-        self.filemenu.entryconfig(MENU_RELOAD_TEXT, state="disabled")
-        self.filemenu.entryconfig("Save PNG...", state="disabled")
-        self.filemenu.entryconfig("Save SVG...", state="disabled")
+        self.file_menu.entryconfig(MENU_RELOAD_TEXT, state="disabled")
+        self.file_menu.entryconfig("Save PNG...", state="disabled")
+        self.file_menu.entryconfig("Save SVG...", state="disabled")
 
     def enable_template_loaded_menus(self):
-        self.filemenu.entryconfig(MENU_RELOAD_TEXT, state="normal")
-        self.filemenu.entryconfig("Save PNG...", state="normal")
-        self.filemenu.entryconfig("Save SVG...", state="normal")
+        self.file_menu.entryconfig(MENU_RELOAD_TEXT, state="normal")
+        self.file_menu.entryconfig("Save PNG...", state="normal")
+        self.file_menu.entryconfig("Save SVG...", state="normal")
 
     def reload(self, _event: Optional[Event] = None):
         if self.current_template_info is None:
@@ -342,7 +356,7 @@ class App(tk.Tk):
         ):
             return
 
-        fp = save_dialog("PNG files", "png")
+        fp = save_dialog("png", "PNG files")
         if fp is None:
             return
 
@@ -359,7 +373,7 @@ class App(tk.Tk):
         ):
             return
 
-        fp = save_dialog("SVG files", "svg")
+        fp = save_dialog("svg", "SVG files")
         if fp is None:
             return
 
