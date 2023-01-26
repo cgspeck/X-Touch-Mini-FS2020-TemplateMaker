@@ -39,13 +39,14 @@ class LabelMappingEditor(tk.Toplevel):
         )
         cb.grid(row=0, column=0, sticky="nsew", columnspan=2)
 
-        columns = ("pattern", "replacement", "in_use")
+        columns = ("pattern", "replacement", "in_use", "is_default")
         tree = ttk.Treeview(
             self, columns=columns, show="headings", name=ITEM_TREEVIEW_NAME
         )
         tree.heading("pattern", text="Pattern")
         tree.heading("replacement", text="Replacement")
         tree.heading("in_use", text="In Use?")
+        tree.heading("is_default", text="Default Mapping?")
 
         self.mappings = mappings
 
@@ -77,10 +78,17 @@ class LabelMappingEditor(tk.Toplevel):
             if filtered and not m.in_use:
                 continue
 
+            in_use = "❌"
+            if m.in_use:
+                in_use = "✔"
+            is_default = "❌"
+            if m.is_default:
+                is_default = "✔"
+
             tree.insert(
                 "",
                 tk.END,
-                values=(m.pat.pattern, m.replacement_unsanitized, m.in_use),
+                values=(m.pat.pattern, m.replacement_unsanitized, in_use, is_default),
                 iid=f"iid-{i}",
             )
 

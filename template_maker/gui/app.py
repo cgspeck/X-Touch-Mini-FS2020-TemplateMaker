@@ -112,13 +112,15 @@ class App(tk.Tk):
             offvalue=False,
             variable=self.desired_blank_setting,
         )
-        self.defaults_enabled = tk.BooleanVar(self, value=config.remove_unrecognized)
+        self.desired_defaults_enabled = tk.BooleanVar(
+            self, value=config.defaults_enabled
+        )
         self.mapping_menu.add_checkbutton(
             label="Enable default mappings",
-            command=self.update_blank_setting_and_reload,
+            command=self.update_defaults_enabled_and_reload,
             onvalue=True,
             offvalue=False,
-            variable=self.defaults_enabled,
+            variable=self.desired_defaults_enabled,
         )
 
         self.mapping_menu.add_command(
@@ -391,6 +393,11 @@ class App(tk.Tk):
 
     def update_blank_setting_and_reload(self):
         self._config.remove_unrecognized = self.desired_blank_setting.get()
+        self._config.save()
+        self.reload()
+
+    def update_defaults_enabled_and_reload(self):
+        self._config.defaults_enabled = self.desired_defaults_enabled.get()
         self._config.save()
         self.reload()
 

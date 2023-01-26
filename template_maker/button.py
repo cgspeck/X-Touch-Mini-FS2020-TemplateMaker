@@ -22,13 +22,24 @@ class ButtonLabels(DataClassJsonMixin):
     primary: Optional[Label] = None
     secondary: Optional[Label] = None
 
-    def apply_mappings(self, mappings: List[TextMapping], blank_unrecognized: bool):
+    def apply_mappings(
+        self,
+        mappings: List[TextMapping],
+        blank_unrecognized: bool,
+        defaults_enabled: bool,
+    ):
         if self.primary is not None:
-            self.primary.apply_mappings(mappings, blank_unrecognized=blank_unrecognized)
+            self.primary.apply_mappings(
+                mappings,
+                blank_unrecognized=blank_unrecognized,
+                defaults_enabled=defaults_enabled,
+            )
 
         if self.secondary is not None:
             self.secondary.apply_mappings(
-                mappings, blank_unrecognized=blank_unrecognized
+                mappings,
+                blank_unrecognized=blank_unrecognized,
+                defaults_enabled=defaults_enabled,
             )
 
     def gather_unmapped_labels(self) -> List[Label]:
@@ -63,13 +74,16 @@ class Button(DataClassJsonMixin):
         self.text_y = self.y + button_dim[1] + label_y_gap
 
     def apply_mappings(
-        self, mappings: List[TextMapping], blank_unrecognized: bool
+        self,
+        mappings: List[TextMapping],
+        blank_unrecognized: bool,
+        defaults_enabled: bool,
     ) -> None:
         if self.layer_a is not None:
-            self.layer_a.apply_mappings(mappings, blank_unrecognized)
+            self.layer_a.apply_mappings(mappings, blank_unrecognized, defaults_enabled)
 
         if self.layer_b is not None:
-            self.layer_b.apply_mappings(mappings, blank_unrecognized)
+            self.layer_b.apply_mappings(mappings, blank_unrecognized, defaults_enabled)
 
     def emit_mask(self) -> str:
         return f'<rect x="{self.x}" y="{self.y}" width="{button_dim[0]}" height="{button_dim[1]}" fill="black" />\n'

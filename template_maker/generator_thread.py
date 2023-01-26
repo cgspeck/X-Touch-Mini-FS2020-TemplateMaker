@@ -52,7 +52,7 @@ class GeneratorThread(Thread):
         mappings = load_mappings()
         self.logger.info(f"Loading '{self.ac_config}'")
         template_info: TemplateInfo = self.parse_ac_config_and_apply_mappings(
-            mappings, self.config.remove_unrecognized
+            mappings, self.config.remove_unrecognized, self.config.defaults_enabled
         )
 
         if len(template_info.error_msgs) > 0:
@@ -85,9 +85,12 @@ class GeneratorThread(Thread):
         svg_to_png(svgstr, template_info.dest_png, self.config.inkscape_path)
 
     def parse_ac_config_and_apply_mappings(
-        self, mappings: List[TextMapping], blank_unrecognized: bool
+        self,
+        mappings: List[TextMapping],
+        blank_unrecognized: bool,
+        defaults_enabled: bool,
     ) -> TemplateInfo:
         template_info = aircraft_config.parse_aircraft_config(self.ac_config)
         template_info.mappings = mappings
-        template_info.apply_template_mappings(blank_unrecognized)
+        template_info.apply_template_mappings(blank_unrecognized, defaults_enabled)
         return template_info
