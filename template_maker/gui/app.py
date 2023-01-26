@@ -1,3 +1,4 @@
+from copy import deepcopy
 from queue import Queue
 import shutil
 import tkinter as tk
@@ -17,7 +18,12 @@ from template_maker.generator_thread import GeneratorThread
 from template_maker.generator_util import PNG_DIM
 
 from template_maker.gui import mapping as gui_mapping_funcs
-from template_maker.gui.util import do_error_box, save_dialog, select_aircraft_config
+from template_maker.gui.util import (
+    do_error_box,
+    noop,
+    save_dialog,
+    select_aircraft_config,
+)
 from template_maker.gui.label_mapping_editor import LabelMappingEditor
 from template_maker.logger import get_logger
 from template_maker.message import Message, MessageType
@@ -26,12 +32,13 @@ from template_maker.template_info import TemplateInfo
 
 from template_maker.text_mapping import (
     TextMapping,
-    load_mappings,
     save_mappings,
 )
 from template_maker.update_check_thread import UpdateCheckResult, UpdateCheckThread
 from template_maker.utils import generate_mapping_templates
 from template_maker.version import VERSION
+
+from template_maker import vars
 
 
 logger = get_logger()
@@ -45,7 +52,6 @@ MENU_RELOAD_TEXT = "Reload (F5)"
 class App(tk.Tk):
     # attach functions defined in other files
     backup_mappings = gui_mapping_funcs.backup_mappings
-    confirm_and_reset_mappings = gui_mapping_funcs.confirm_and_reset_mappings
     import_mappings = gui_mapping_funcs.import_mappings
 
     def __init__(
@@ -88,16 +94,12 @@ class App(tk.Tk):
             command=self.show_label_mapping_editor,
         )
         self.mapping_menu.add_command(
-            label="Save mappings to file...",
-            command=self.backup_mappings,
+            label="Export mappings...",
+            command=self.backup_mappings,  # FIXME!
         )
         self.mapping_menu.add_command(
-            label="Import mappings from file...",
-            command=lambda: self.import_mappings(self.reload),
-        )
-        self.mapping_menu.add_command(
-            label="Restore default mappings",
-            command=lambda: self.confirm_and_reset_mappings(self.reload),
+            label="Import mappings...",
+            command=lambda: self.import_mappings(self.reload),  # FIXME!
         )
 
         self.desired_blank_setting = tk.BooleanVar(
@@ -109,6 +111,19 @@ class App(tk.Tk):
             onvalue=True,
             offvalue=False,
             variable=self.desired_blank_setting,
+        )
+        self.defaults_enabled = tk.BooleanVar(self, value=config.remove_unrecognized)
+        self.mapping_menu.add_checkbutton(
+            label="Enable default mappings",
+            command=self.update_blank_setting_and_reload,
+            onvalue=True,
+            offvalue=False,
+            variable=self.defaults_enabled,
+        )
+
+        self.mapping_menu.add_command(
+            label="Check for default updates",
+            command=noop,
         )
         self.menubar.add_cascade(label="Mappings", menu=self.mapping_menu)
 
@@ -273,7 +288,7 @@ class App(tk.Tk):
         if len(unmapped_labels) == 0:
             return
 
-        message = f"{len(unmapped_labels)} umapped labels were detected,\nwould you like to define them now?"
+        message = f"{len(unmapped_labels)} unmapped labels were detected,\nwould you like to define them now?"
         choice = messagebox.askquestion(
             title="Unmapped labels detected",
             message=message,
@@ -288,10 +303,7 @@ class App(tk.Tk):
         if self.current_template_info is None:
             return
 
-        if self.check_for_unmapped_labels is not None:
-            mappings = self.current_template_info.mappings
-        else:
-            mappings = load_mappings()
+        mappings = deepcopy(self.current_template_info.mappings)
 
         mappings.extend(
             generate_mapping_templates(
@@ -307,13 +319,20 @@ class App(tk.Tk):
         )
 
     def save_mappings_and_reload(self, updated_mappings: List[TextMapping]):
-        selected: List[TextMapping] = []
+        user_mappings: List[TextMapping] = []
 
+        # default ones that have been modified become user ones
         for m in updated_mappings:
-            if m.modified or not m.new:
-                selected.append(m)
+            if m.is_default and m.modified:
+                m.is_default = False
+                user_mappings.append(m)
+            elif not m.is_default:
+                if m.modified or not m.new:
+                    user_mappings.append(m)
 
-        save_mappings(selected)
+        user_mappings.sort()
+
+        save_mappings(user_mappings, vars.user_mappings)
         self.reload()
 
     def load_image(self, image_file_path: Path):

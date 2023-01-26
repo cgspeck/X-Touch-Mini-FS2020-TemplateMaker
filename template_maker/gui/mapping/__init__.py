@@ -28,18 +28,18 @@ def backup_mappings(self: tk.Tk):
     shutil.copy(vars.user_mappings, fp)
 
 
-def confirm_and_reset_mappings(self: tk.Tk, success_cb: Callable[[], None]):
-    message = f"This will replace all custom mappings with the default. Are you sure you want to continue?"
-    choice = messagebox.askquestion(
-        title="Reset user mappings?",
-        message=message,
-    )
+# def confirm_and_reset_mappings(self: tk.Tk, success_cb: Callable[[], None]):
+#     message = f"This will replace all custom mappings with the default. Are you sure you want to continue?"
+#     choice = messagebox.askquestion(
+#         title="Reset user mappings?",
+#         message=message,
+#     )
 
-    if choice == "no":
-        return
+#     if choice == "no":
+#         return
 
-    text_mapping.reset_mappings()
-    success_cb()
+#     text_mapping.reset_mappings()
+#     success_cb()
 
 
 def import_mappings(self: tk.Tk, success_cb: Callable[[], None]):
@@ -57,7 +57,7 @@ def import_mappings(self: tk.Tk, success_cb: Callable[[], None]):
     memo: List[text_mapping.TextMapping] = []
 
     try:
-        memo = text_mapping.parse_file(fp)
+        memo = text_mapping.parse_file(fp, is_default=False)
         if len(memo) == 0:
             error_msg = f"'{fp.name}' appears to be invalid.\nNo mappings were loaded."
 

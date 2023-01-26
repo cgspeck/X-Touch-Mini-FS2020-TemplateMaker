@@ -7,3 +7,4 @@ dist/
 build_tag
 scratch/
 versionfile.txt
+.pytest_cache/
