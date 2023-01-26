@@ -101,7 +101,7 @@ class App(tk.Tk):
         )
         self.mapping_menu.add_command(
             label="Import mappings...",
-            command=lambda: self.import_mappings(self.reload),  # FIXME!
+            command=lambda: self.import_mappings(self._config, self.reload),
         )
 
         self.desired_blank_setting = tk.BooleanVar(
@@ -251,6 +251,7 @@ class App(tk.Tk):
         self.file_menu.entryconfig("Save SVG...", state="normal")
 
     def reload(self, _event: Optional[Event] = None):
+        self._config = Config.load()
         if self.current_template_info is None:
             return
 

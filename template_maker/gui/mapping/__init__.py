@@ -4,6 +4,7 @@ import tkinter as tk
 from typing import Callable, List, Optional
 from tkinter import filedialog as fd
 from tkinter import messagebox
+from template_maker.config import Config
 
 from template_maker.gui.util import save_dialog
 from template_maker.logger import get_logger
@@ -39,7 +40,7 @@ def export_mappings(
     text_mapping.export_mappings(template_info.mappings, default_version, Path(fp))
 
 
-def import_mappings(self: tk.Tk, success_cb: Callable[[], None]):
+def import_mappings(self: tk.Tk, config: Config, success_cb: Callable[[], None]):
     filetypes = ((MAPPING_FILE_DESC, f"*.{MAPPING_FILE_EXT}"), ("All files", "*.*"))
 
     filename = fd.askopenfilename(
@@ -51,24 +52,27 @@ def import_mappings(self: tk.Tk, success_cb: Callable[[], None]):
 
     fp = Path(filename)
     error_msg: Optional[str] = None
-    memo: List[text_mapping.TextMapping] = []
 
     try:
-        memo = text_mapping.parse_file(fp, is_default=False)
-        if len(memo) == 0:
-            error_msg = f"'{fp.name}' appears to be invalid.\nNo mappings were loaded."
-
+        new_mapping_version = text_mapping.import_mappings(
+            fp, vars.user_mappings, vars.default_mappings
+        )
     except Exception as err:
         error_msg = f"Error parsing '{fp.name}':\n{err}"
 
     if error_msg is not None:
         messagebox.showerror("Unable to load mappings", error_msg)
         return
-    logger.info(f"Writing {vars.user_mappings}")
-    shutil.copy(fp, vars.user_mappings)
+
+    msg = f"User and Default mappings have been loaded from {fp.name}"
+
+    if new_mapping_version != config.default_mapping_version:
+        config.default_mapping_version = new_mapping_version
+        config.save()
+        msg += f"\n\nNew default mapping version is {new_mapping_version}"
 
     messagebox.showinfo(
         "Successfully loaded mappings",
-        f"{len(memo)} mappings have been loaded from {fp.name}",
+        msg,
     )
     success_cb()
