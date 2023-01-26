@@ -10,13 +10,24 @@ from template_maker.logger import get_logger
 from template_maker import vars
 from template_maker import text_mapping
 
+from semver import VersionInfo
+
+from template_maker.template_info import TemplateInfo
+
 logger = get_logger()
 
-MAPPING_FILE_EXT = "mappings"
+MAPPING_FILE_EXT = "yaml"
 MAPPING_FILE_DESC = "Mapping Files"
 
 
-def backup_mappings(self: tk.Tk):
+def export_mappings(
+    self: tk.Tk,
+    template_info: Optional[TemplateInfo],
+    default_version: VersionInfo,
+):
+    if template_info is None:
+        return
+
     fp = save_dialog(MAPPING_FILE_EXT, MAPPING_FILE_DESC)
     if fp is None:
         return
@@ -25,21 +36,7 @@ def backup_mappings(self: tk.Tk):
         fp = fp.parent / (fp.name + f".{MAPPING_FILE_EXT}")
 
     logger.info(f"Writing {fp}")
-    shutil.copy(vars.user_mappings, fp)
-
-
-# def confirm_and_reset_mappings(self: tk.Tk, success_cb: Callable[[], None]):
-#     message = f"This will replace all custom mappings with the default. Are you sure you want to continue?"
-#     choice = messagebox.askquestion(
-#         title="Reset user mappings?",
-#         message=message,
-#     )
-
-#     if choice == "no":
-#         return
-
-#     text_mapping.reset_mappings()
-#     success_cb()
+    text_mapping.export_mappings(template_info.mappings, default_version, Path(fp))
 
 
 def import_mappings(self: tk.Tk, success_cb: Callable[[], None]):

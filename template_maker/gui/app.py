@@ -51,7 +51,7 @@ MENU_RELOAD_TEXT = "Reload (F5)"
 
 class App(tk.Tk):
     # attach functions defined in other files
-    backup_mappings = gui_mapping_funcs.backup_mappings
+    export_mappings = gui_mapping_funcs.export_mappings
     import_mappings = gui_mapping_funcs.import_mappings
 
     def __init__(
@@ -95,7 +95,9 @@ class App(tk.Tk):
         )
         self.mapping_menu.add_command(
             label="Export mappings...",
-            command=self.backup_mappings,  # FIXME!
+            command=lambda: self.export_mappings(
+                self.current_template_info, self._config.default_mapping_version
+            ),
         )
         self.mapping_menu.add_command(
             label="Import mappings...",

@@ -133,10 +133,14 @@ class LabelMappingEditor(tk.Toplevel):
         self.mappings[mapping_index].modified = True
 
         treeview.delete(item_id)
+        is_default = "❌"
 
         # Put it back in with the updated values
         treeview.insert(
-            "", treeview_index, values=(pattern, replacement, in_use), iid=item_id
+            "",
+            treeview_index,
+            values=(pattern, replacement, in_use, is_default),
+            iid=item_id,
         )
 
         return True
