@@ -1,6 +1,6 @@
 import html
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from re import Pattern
 import shutil
@@ -29,6 +29,11 @@ class TextMapping(DataClassJsonMixin):
     new: bool = False
     modified: bool = False
     is_default: bool = False
+    deletable: bool = field(init=False)
+    delete: bool = False
+
+    def __post_init__(self):
+        self.deletable = not self.is_default
 
     def __lt__(self, other: Any):
         if type(other) == TextMapping:

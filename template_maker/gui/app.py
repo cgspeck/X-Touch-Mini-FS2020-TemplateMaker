@@ -126,10 +126,10 @@ class App(tk.Tk):
             variable=self.desired_defaults_enabled,
         )
 
-        self.mapping_menu.add_command(
-            label="Check for default updates",
-            command=noop,
-        )
+        # self.mapping_menu.add_command(
+        #     label="Check for default updates",
+        #     command=noop,
+        # )
 
         self.mapping_menu.add_command(
             label="Reset mappings",
@@ -334,6 +334,9 @@ class App(tk.Tk):
 
         # default ones that have been modified become user ones
         for m in updated_mappings:
+            if m.delete:
+                continue
+
             if m.is_default and m.modified:
                 m.is_default = False
                 user_mappings.append(m)
