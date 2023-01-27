@@ -3,6 +3,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 from re import Pattern
+import shutil
 from typing import Any, List, Union
 
 import yaml
@@ -11,6 +12,7 @@ from semver import VersionInfo
 from yaml import FullLoader, Loader, UnsafeLoader
 
 from template_maker import vars
+from template_maker.config import Config
 from template_maker.logger import get_logger
 
 DEFAULT_REPLACEMENT_TEXT = "SET ME!"
@@ -74,7 +76,7 @@ def sanitise_replacement(original: str) -> str:
     return html.escape(original)
 
 
-def parse_file(fp: Path, is_default: bool) -> List[TextMapping]:
+def _parse_file(fp: Path, is_default: bool) -> List[TextMapping]:
     memo = []
 
     txt = fp.read_text()
@@ -104,8 +106,15 @@ def parse_file(fp: Path, is_default: bool) -> List[TextMapping]:
 def load_mappings() -> List[TextMapping]:
     memo = []
 
-    memo.extend(parse_file(vars.user_mappings, is_default=False))
-    memo.extend(parse_file(vars.default_mappings, is_default=True))
+    if vars.user_mappings.exists():
+        memo.extend(_parse_file(vars.user_mappings, is_default=False))
+
+    if not vars.default_mappings.exists():
+        shutil.copy(vars.default_mappings_dist, vars.default_mappings)
+        Config.reset_default_mapping_version()
+        logger.info("Default mappings were restored from dist file")
+
+    memo.extend(_parse_file(vars.default_mappings, is_default=True))
     memo.sort()
 
     return memo

@@ -89,6 +89,12 @@ class Config:
 
         return cls.create()
 
+    @classmethod
+    def reset_default_mapping_version(cls) -> None:
+        k = cls.load()
+        k.default_mapping_version = VersionInfo.parse("1.0.0")
+        k.save()
+
     def save(self):
         memo = {
             "defaults_enabled": self.defaults_enabled,

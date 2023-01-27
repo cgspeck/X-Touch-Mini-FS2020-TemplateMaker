@@ -53,6 +53,7 @@ class App(tk.Tk):
     # attach functions defined in other files
     export_mappings = gui_mapping_funcs.export_mappings
     import_mappings = gui_mapping_funcs.import_mappings
+    reset_mappings = gui_mapping_funcs.reset_mappings
 
     def __init__(
         self,
@@ -128,6 +129,11 @@ class App(tk.Tk):
         self.mapping_menu.add_command(
             label="Check for default updates",
             command=noop,
+        )
+
+        self.mapping_menu.add_command(
+            label="Reset mappings",
+            command=lambda: self.reset_mappings(self.reload),
         )
         self.menubar.add_cascade(label="Mappings", menu=self.mapping_menu)
 

@@ -76,3 +76,21 @@ def import_mappings(self: tk.Tk, config: Config, success_cb: Callable[[], None])
         msg,
     )
     success_cb()
+
+
+def reset_mappings(self: tk.Tk, success_cb: Callable[[], None]):
+    yn = messagebox.askyesno(
+        "Reset mappings?",
+        "Are you sure you want to reset mappings?\n\nThis will delete all user mappings and reset\ndefault mappings to v1.0.0?",
+        **{"icon": messagebox.WARNING},
+    )
+
+    if yn != tk.YES:
+        return
+
+    logger.info(f"Deleting {vars.user_mappings}")
+    vars.user_mappings.unlink()
+    logger.info(f"Deleting {vars.default_mappings}")
+    vars.default_mappings.unlink()
+    logger.info("Running success_cb")
+    success_cb()

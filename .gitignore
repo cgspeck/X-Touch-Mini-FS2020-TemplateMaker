@@ -8,3 +8,5 @@ build_tag
 scratch/
 versionfile.txt
 .pytest_cache/
+r.bat
+resources/mappings.default.txt
