@@ -1,12 +1,15 @@
 import re
 import tkinter as tk
-from tkinter import Event, Toplevel, ttk
+from tkinter import NO, Event, Toplevel, ttk
 from tkinter import messagebox
 from typing import Callable, List
 
 from template_maker.text_mapping import TextMapping, sanitise_replacement
 
 ITEM_TREEVIEW_NAME = "item-treeview"
+SMALL_COL_WIDTH = 40
+EDIT_TEXT = "📝"
+DELETE_TEXT = "🚮"
 
 
 class LabelMappingEditor(tk.Toplevel):
@@ -39,18 +42,26 @@ class LabelMappingEditor(tk.Toplevel):
         )
         cb.grid(row=0, column=0, sticky="nsew", columnspan=2)
 
-        columns = ("pattern", "replacement", "in_use")
+        columns = ("edit", "delete", "pattern", "replacement", "in_use", "is_default")
         tree = ttk.Treeview(
             self, columns=columns, show="headings", name=ITEM_TREEVIEW_NAME
         )
+
+        tree.column("edit", stretch=NO, width=SMALL_COL_WIDTH)
+        tree.column("delete", stretch=NO, width=SMALL_COL_WIDTH)
+        tree.column("in_use", stretch=NO, width=SMALL_COL_WIDTH)
+        tree.column("is_default", stretch=NO, width=SMALL_COL_WIDTH)
+
+        tree.heading("edit", text="Edit")
+        tree.heading("delete", text="Delete")
         tree.heading("pattern", text="Pattern")
         tree.heading("replacement", text="Replacement")
         tree.heading("in_use", text="In Use?")
+        tree.heading("is_default", text="Default Mapping?")
 
         self.mappings = mappings
 
         # from https://stackoverflow.com/a/41991207
-        # tree.bind("<Double-Button-1>", self.on_item_doubleclick)
         tree.bind("<Double-1>", self.on_item_doubleclick)
         tree.grid(row=1, column=0, sticky="nsew", columnspan=2)
 
@@ -77,10 +88,28 @@ class LabelMappingEditor(tk.Toplevel):
             if filtered and not m.in_use:
                 continue
 
+            in_use = "❌"
+            if m.in_use:
+                in_use = "✔"
+            is_default = "❌"
+            if m.is_default:
+                is_default = "✔"
+
+            del_text = ""
+            if m.deletable:
+                del_text = DELETE_TEXT
+
             tree.insert(
                 "",
                 tk.END,
-                values=(m.pat.pattern, m.replacement_unsanitized, m.in_use),
+                values=(
+                    EDIT_TEXT,
+                    del_text,
+                    m.pat.pattern,
+                    m.replacement_unsanitized,
+                    in_use,
+                    is_default,
+                ),
                 iid=f"iid-{i}",
             )
 
@@ -123,12 +152,24 @@ class LabelMappingEditor(tk.Toplevel):
         self.mappings[mapping_index].replacement = sanitise_replacement(replacement)
         self.mappings[mapping_index].replacement_unsanitized = replacement
         self.mappings[mapping_index].modified = True
+        self.mappings[mapping_index].deletable = True
 
         treeview.delete(item_id)
+        is_default = "❌"
 
         # Put it back in with the updated values
         treeview.insert(
-            "", treeview_index, values=(pattern, replacement, in_use), iid=item_id
+            "",
+            treeview_index,
+            values=(
+                EDIT_TEXT,
+                DELETE_TEXT,
+                pattern,
+                replacement,
+                in_use,
+                is_default,
+            ),
+            iid=item_id,
         )
 
         return True
@@ -140,6 +181,11 @@ class LabelMappingEditor(tk.Toplevel):
         # First check if a blank space was selected
         entry_id = treeView.focus()
         if "" == entry_id:
+            return
+
+        click_col = treeView.identify_column(event.x)
+        if click_col == "#2":
+            self.do_item_delete(treeView, entry_id)
             return
 
         # Set up window
@@ -160,13 +206,13 @@ class LabelMappingEditor(tk.Toplevel):
 
         col1Lbl = ttk.Label(win, text="Regex Search Pattern: ")
         col1Ent = ttk.Entry(win)
-        col1Ent.insert(0, values[0])  # Default is column 1's current value
+        col1Ent.insert(0, values[2])  # Default is column 1's current value
         col1Lbl.grid(row=0, column=0)
         col1Ent.grid(row=0, column=1)
 
         col2Lbl = ttk.Label(win, text="Replacement: ")
         col2Ent = ttk.Entry(win)
-        col2Ent.insert(0, values[1])  # Default is column 2's current value
+        col2Ent.insert(0, values[3])  # Default is column 2's current value
         col2Lbl.grid(row=0, column=2)
         col2Ent.grid(row=0, column=3)
 
@@ -175,7 +221,7 @@ class LabelMappingEditor(tk.Toplevel):
                 treeview=treeView,
                 pattern=col1Ent.get(),
                 replacement=col2Ent.get(),
-                in_use=values[2],
+                in_use=values[4],
                 treeview_index=current_index,
                 item_id=entry_id,
             ):
@@ -188,3 +234,12 @@ class LabelMappingEditor(tk.Toplevel):
         canButt = ttk.Button(win, text="Cancel")
         canButt.bind("<Button-1>", lambda c: win.destroy())
         canButt.grid(row=1, column=5)
+
+    def do_item_delete(self, treeview: ttk.Treeview, item_id: str):
+        mapping_index = int(item_id.split("-")[1])
+
+        if not self.mappings[mapping_index].deletable:
+            return
+
+        self.mappings[mapping_index].delete = True
+        treeview.delete(item_id)

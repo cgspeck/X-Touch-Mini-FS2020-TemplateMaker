@@ -1,0 +1,2 @@
+default pattern 1 = default unsanitised replacement 1
+default pattern 2 = default unsanitised replacement 2

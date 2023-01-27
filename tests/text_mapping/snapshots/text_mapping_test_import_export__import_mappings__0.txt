@@ -1,0 +1,2 @@
+user pattern 1 = user unsanitised replacement 1
+user pattern 2 = user unsanitised replacement 2

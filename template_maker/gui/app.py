@@ -1,3 +1,4 @@
+from copy import deepcopy
 from queue import Queue
 import shutil
 import tkinter as tk
@@ -15,7 +16,14 @@ from win32api import GetSystemMetrics
 from template_maker.config import Config
 from template_maker.generator_thread import GeneratorThread
 from template_maker.generator_util import PNG_DIM
-from template_maker.gui.util import do_error_box, save_dialog, select_aircraft_config
+
+from template_maker.gui import mapping as gui_mapping_funcs
+from template_maker.gui.util import (
+    do_error_box,
+    noop,
+    save_dialog,
+    select_aircraft_config,
+)
 from template_maker.gui.label_mapping_editor import LabelMappingEditor
 from template_maker.logger import get_logger
 from template_maker.message import Message, MessageType
@@ -24,13 +32,13 @@ from template_maker.template_info import TemplateInfo
 
 from template_maker.text_mapping import (
     TextMapping,
-    load_mappings,
-    reset_mappings,
     save_mappings,
 )
 from template_maker.update_check_thread import UpdateCheckResult, UpdateCheckThread
 from template_maker.utils import generate_mapping_templates
 from template_maker.version import VERSION
+
+from template_maker import vars
 
 
 logger = get_logger()
@@ -42,6 +50,11 @@ MENU_RELOAD_TEXT = "Reload (F5)"
 
 
 class App(tk.Tk):
+    # attach functions defined in other files
+    export_mappings = gui_mapping_funcs.export_mappings
+    import_mappings = gui_mapping_funcs.import_mappings
+    reset_mappings = gui_mapping_funcs.reset_mappings
+
     def __init__(
         self,
         config: Config,
@@ -60,43 +73,69 @@ class App(tk.Tk):
         self.geometry("{}x{}".format(window_width, window_height))
 
         self.menubar = tk.Menu(self)
-        self.filemenu = tk.Menu(self.menubar, tearoff=False)
-        self.filemenu.add_command(
+        self.file_menu = tk.Menu(self.menubar, tearoff=False)
+        self.file_menu.add_command(
             label="Open...", command=lambda: self.select_and_load(None)
         )
-        self.filemenu.add_command(
+        self.file_menu.add_command(
             label=MENU_RELOAD_TEXT, command=self.reload, state="disabled"
         )
-        self.filemenu.add_command(
+        self.file_menu.add_command(
             label="Save PNG...", command=self.save_png, state="disabled"
         )
-        self.filemenu.add_command(
+        self.file_menu.add_command(
             label="Save SVG...", command=self.save_svg, state="disabled"
         )
-        self.filemenu.add_command(label="Exit", command=self.quit)
-        self.menubar.add_cascade(label="File", menu=self.filemenu)
+        self.file_menu.add_command(label="Exit", command=self.quit)
+        self.menubar.add_cascade(label="File", menu=self.file_menu)
 
-        self.editmenu = tk.Menu(self.menubar, tearoff=False)
-        self.editmenu.add_command(
+        self.mapping_menu = tk.Menu(self.menubar, tearoff=False)
+        self.mapping_menu.add_command(
             label="Manage label mappings...",
             command=self.show_label_mapping_editor,
         )
-        self.editmenu.add_command(
-            label="Restore default mappings",
-            command=self.confirm_and_reset_mappings,
+        self.mapping_menu.add_command(
+            label="Export mappings...",
+            command=lambda: self.export_mappings(
+                self.current_template_info, self._config.default_mapping_version
+            ),
+        )
+        self.mapping_menu.add_command(
+            label="Import mappings...",
+            command=lambda: self.import_mappings(self._config, self.reload),
         )
 
         self.desired_blank_setting = tk.BooleanVar(
             self, value=config.remove_unrecognized
         )
-        self.editmenu.add_checkbutton(
+        self.mapping_menu.add_checkbutton(
             label="Blank out unrecognized labels",
             command=self.update_blank_setting_and_reload,
             onvalue=True,
             offvalue=False,
             variable=self.desired_blank_setting,
         )
-        self.menubar.add_cascade(label="Edit", menu=self.editmenu)
+        self.desired_defaults_enabled = tk.BooleanVar(
+            self, value=config.defaults_enabled
+        )
+        self.mapping_menu.add_checkbutton(
+            label="Enable default mappings",
+            command=self.update_defaults_enabled_and_reload,
+            onvalue=True,
+            offvalue=False,
+            variable=self.desired_defaults_enabled,
+        )
+
+        # self.mapping_menu.add_command(
+        #     label="Check for default updates",
+        #     command=noop,
+        # )
+
+        self.mapping_menu.add_command(
+            label="Reset mappings",
+            command=lambda: self.reset_mappings(self.reload),
+        )
+        self.menubar.add_cascade(label="Mappings", menu=self.mapping_menu)
 
         self.helpmenu = tk.Menu(self.menubar, tearoff=False)
         self.helpmenu.add_command(
@@ -208,16 +247,17 @@ class App(tk.Tk):
         self.check_for_unmapped_labels()
 
     def disable_template_loaded_menus(self):
-        self.filemenu.entryconfig(MENU_RELOAD_TEXT, state="disabled")
-        self.filemenu.entryconfig("Save PNG...", state="disabled")
-        self.filemenu.entryconfig("Save SVG...", state="disabled")
+        self.file_menu.entryconfig(MENU_RELOAD_TEXT, state="disabled")
+        self.file_menu.entryconfig("Save PNG...", state="disabled")
+        self.file_menu.entryconfig("Save SVG...", state="disabled")
 
     def enable_template_loaded_menus(self):
-        self.filemenu.entryconfig(MENU_RELOAD_TEXT, state="normal")
-        self.filemenu.entryconfig("Save PNG...", state="normal")
-        self.filemenu.entryconfig("Save SVG...", state="normal")
+        self.file_menu.entryconfig(MENU_RELOAD_TEXT, state="normal")
+        self.file_menu.entryconfig("Save PNG...", state="normal")
+        self.file_menu.entryconfig("Save SVG...", state="normal")
 
     def reload(self, _event: Optional[Event] = None):
+        self._config = Config.load()
         if self.current_template_info is None:
             return
 
@@ -259,7 +299,7 @@ class App(tk.Tk):
         if len(unmapped_labels) == 0:
             return
 
-        message = f"{len(unmapped_labels)} umapped labels were detected,\nwould you like to define them now?"
+        message = f"{len(unmapped_labels)} unmapped labels were detected,\nwould you like to define them now?"
         choice = messagebox.askquestion(
             title="Unmapped labels detected",
             message=message,
@@ -274,10 +314,7 @@ class App(tk.Tk):
         if self.current_template_info is None:
             return
 
-        if self.check_for_unmapped_labels is not None:
-            mappings = self.current_template_info.mappings
-        else:
-            mappings = load_mappings()
+        mappings = deepcopy(self.current_template_info.mappings)
 
         mappings.extend(
             generate_mapping_templates(
@@ -293,26 +330,23 @@ class App(tk.Tk):
         )
 
     def save_mappings_and_reload(self, updated_mappings: List[TextMapping]):
-        selected: List[TextMapping] = []
+        user_mappings: List[TextMapping] = []
 
+        # default ones that have been modified become user ones
         for m in updated_mappings:
-            if m.modified or not m.new:
-                selected.append(m)
+            if m.delete:
+                continue
 
-        save_mappings(selected)
-        self.reload()
+            if m.is_default and m.modified:
+                m.is_default = False
+                user_mappings.append(m)
+            elif not m.is_default:
+                if m.modified or not m.new:
+                    user_mappings.append(m)
 
-    def confirm_and_reset_mappings(self):
-        message = f"This will replace all custom mappings with the default. Are you sure you want to continue?"
-        choice = messagebox.askquestion(
-            title="Reset user mappings?",
-            message=message,
-        )
+        user_mappings.sort()
 
-        if choice == "no":
-            return
-
-        reset_mappings()
+        save_mappings(user_mappings, vars.user_mappings)
         self.reload()
 
     def load_image(self, image_file_path: Path):
@@ -342,7 +376,7 @@ class App(tk.Tk):
         ):
             return
 
-        fp = save_dialog("PNG files", "png")
+        fp = save_dialog("png", "PNG files")
         if fp is None:
             return
 
@@ -359,7 +393,7 @@ class App(tk.Tk):
         ):
             return
 
-        fp = save_dialog("SVG files", "svg")
+        fp = save_dialog("svg", "SVG files")
         if fp is None:
             return
 
@@ -371,6 +405,11 @@ class App(tk.Tk):
 
     def update_blank_setting_and_reload(self):
         self._config.remove_unrecognized = self.desired_blank_setting.get()
+        self._config.save()
+        self.reload()
+
+    def update_defaults_enabled_and_reload(self):
+        self._config.defaults_enabled = self.desired_defaults_enabled.get()
         self._config.save()
         self.reload()
 

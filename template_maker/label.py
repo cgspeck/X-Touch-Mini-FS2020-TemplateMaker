@@ -33,7 +33,10 @@ class Label(DataClassJsonMixin):
         return self.display is not None and len(self.display.strip()) > 0
 
     def apply_mappings(
-        self, mappings: List[TextMapping], blank_unrecognized: bool
+        self,
+        mappings: List[TextMapping],
+        blank_unrecognized: bool,
+        defaults_enabled: bool,
     ) -> None:
         if self.original is None:
             return
@@ -42,6 +45,9 @@ class Label(DataClassJsonMixin):
         self.replaced = False
 
         for m in mappings:
+            if m.is_default and not defaults_enabled:
+                continue
+
             if m.pat.search(self.original):
                 self.display = m.replacement
                 self.replaced = True

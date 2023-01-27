@@ -29,6 +29,7 @@ resources_path = None
 if resources_path is None:
     resources_path = Path(__file__).parent.parent / "resources"
 
+default_mappings_dist = Path(resources_path, "mappings.default.txt.dist")
 default_mappings = Path(resources_path, "mappings.default.txt")
 
 user_mappings = Path(data_path, "mappings.local.txt")

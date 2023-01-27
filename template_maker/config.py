@@ -4,13 +4,14 @@ import json
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, Optional
+from semver import VersionInfo
 
 from template_maker.errors import PrerequsitesNotFoundException
 from template_maker.logger import get_logger
 from template_maker.vars import data_path
 
-SCHEMA_VERSION = 0
+SCHEMA_VERSION = 1
 CONFIG_FILE = Path(data_path, "config.json")
 
 logger = get_logger()
@@ -21,7 +22,9 @@ class Config:
     inkscape_path: Path
     xtouch_mini_fs2020_path: Path
     remove_unrecognized: bool
+    defaults_enabled: bool
     xtouch_mini_fs2020_aircraft_path: Path = field(init=False)
+    default_mapping_version: VersionInfo
     schema_version = SCHEMA_VERSION
 
     def __post_init__(self):
@@ -62,6 +65,8 @@ class Config:
             inkscape_path=inkscape_path,
             xtouch_mini_fs2020_path=xtouch_mini_fs2020_path.parent,
             remove_unrecognized=True,
+            defaults_enabled=True,
+            default_mapping_version=VersionInfo(1, 0, 0),
         )
 
         memo.save()
@@ -70,22 +75,34 @@ class Config:
     @classmethod
     def load(cls) -> Config:
         if CONFIG_FILE.exists():
-            dct = json.loads(CONFIG_FILE.read_text())
+            dct: Dict[str, Any] = json.loads(CONFIG_FILE.read_text())
 
             if "schema_version" in dct:
                 del dct["schema_version"]
             dct["inkscape_path"] = Path(dct["inkscape_path"])
             dct["xtouch_mini_fs2020_path"] = Path(dct["xtouch_mini_fs2020_path"])
+            dct["defaults_enabled"] = dct.get("defaults_enabled", True)
+            dct["default_mapping_version"] = VersionInfo.parse(
+                dct.get("default_mapping_version", "1.0.0")
+            )
             return cls(**dct)
 
         return cls.create()
 
+    @classmethod
+    def reset_default_mapping_version(cls) -> None:
+        k = cls.load()
+        k.default_mapping_version = VersionInfo.parse("1.0.0")
+        k.save()
+
     def save(self):
         memo = {
+            "defaults_enabled": self.defaults_enabled,
             "inkscape_path": str(self.inkscape_path),
-            "xtouch_mini_fs2020_path": str(self.xtouch_mini_fs2020_path),
             "remove_unrecognized": self.remove_unrecognized,
             "schema_version": self.schema_version,
+            "xtouch_mini_fs2020_path": str(self.xtouch_mini_fs2020_path),
+            "default_mapping_version": str(self.default_mapping_version),
         }
         logger.info(f"Writing '{CONFIG_FILE}'")
         CONFIG_FILE.write_text(json.dumps(memo, sort_keys=True, indent=2))

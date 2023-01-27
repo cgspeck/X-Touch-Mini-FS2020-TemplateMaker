@@ -25,19 +25,22 @@ class EncoderLabels(DataClassJsonMixin):
     secondary: Optional[Label] = None
     tertiary: Optional[Label] = None
 
-    def apply_mappings(self, mappings: List[TextMapping], blank_unrecognized: bool):
+    def apply_mappings(
+        self,
+        mappings: List[TextMapping],
+        blank_unrecognized: bool,
+        defaults_enabled: bool,
+    ):
         if self.primary is not None:
-            self.primary.apply_mappings(mappings, blank_unrecognized=blank_unrecognized)
+            self.primary.apply_mappings(mappings, blank_unrecognized, defaults_enabled)
 
         if self.secondary is not None:
             self.secondary.apply_mappings(
-                mappings, blank_unrecognized=blank_unrecognized
+                mappings, blank_unrecognized, defaults_enabled
             )
 
         if self.tertiary is not None:
-            self.tertiary.apply_mappings(
-                mappings, blank_unrecognized=blank_unrecognized
-            )
+            self.tertiary.apply_mappings(mappings, blank_unrecognized, defaults_enabled)
 
     def gather_unmapped_labels(self) -> List[Label]:
         memo = []
@@ -60,13 +63,16 @@ class Encoder(DataClassJsonMixin):
         self.mid_x = encoder_x_origin + encoder_rad + (self.index - 1) * encoder_x_dist
 
     def apply_mappings(
-        self, mappings: List[TextMapping], blank_unrecognized: bool
+        self,
+        mappings: List[TextMapping],
+        blank_unrecognized: bool,
+        defaults_enabled: bool,
     ) -> None:
         if self.layer_a is not None:
-            self.layer_a.apply_mappings(mappings, blank_unrecognized)
+            self.layer_a.apply_mappings(mappings, blank_unrecognized, defaults_enabled)
 
         if self.layer_b is not None:
-            self.layer_b.apply_mappings(mappings, blank_unrecognized)
+            self.layer_b.apply_mappings(mappings, blank_unrecognized, defaults_enabled)
 
     def emit_mask(self) -> str:
         return f'<circle cx="{self.mid_x}" cy="{encoder_y_origin + encoder_rad}" r="{encoder_rad}" fill="black" />\n'
