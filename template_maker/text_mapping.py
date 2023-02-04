@@ -81,7 +81,8 @@ def sanitise_replacement(original: str) -> str:
     return html.escape(original)
 
 
-def _parse_file(fp: Path, is_default: bool) -> List[TextMapping]:
+def _parse_user_txt_file() -> List[TextMapping]:
+    fp = vars.user_mappings
     memo = []
 
     txt = fp.read_text()
@@ -102,7 +103,32 @@ def _parse_file(fp: Path, is_default: bool) -> List[TextMapping]:
                 replacement=sanitise_replacement(v),
                 replacement_unsanitized=v,
                 in_use=False,
-                is_default=is_default,
+                is_default=False,
+            )
+        )
+    return memo
+
+
+def _parse_defaults_yaml_file() -> List[TextMapping]:
+    fp = vars.default_mappings
+    memo = []
+
+    dct = yaml.load(fp.read_text(), Loader=yaml.Loader)
+    for l in dct["mappings"]:
+        l = l.strip()
+        if len(l) == 0:
+            continue
+
+        k, v = l.split("=")
+        k = k.strip()
+        v = v.strip()
+        memo.append(
+            TextMapping(
+                pat=re.compile(k),
+                replacement=sanitise_replacement(v),
+                replacement_unsanitized=v,
+                in_use=False,
+                is_default=True,
             )
         )
     return memo
@@ -112,33 +138,47 @@ def load_mappings() -> List[TextMapping]:
     memo = []
 
     if vars.user_mappings.exists():
-        memo.extend(_parse_file(vars.user_mappings, is_default=False))
+        memo.extend(_parse_user_txt_file())
 
     if not vars.default_mappings.exists():
         shutil.copy(vars.default_mappings_dist, vars.default_mappings)
-        Config.reset_default_mapping_version()
         logger.info("Default mappings were restored from dist file")
 
-    memo.extend(_parse_file(vars.default_mappings, is_default=True))
+    memo.extend(_parse_defaults_yaml_file())
     memo.sort()
 
     return memo
 
 
-def save_mappings(mappings: List[TextMapping], dest: Path):
+def save_user_mappings(mappings: List[TextMapping], dest: Path):
     with dest.open("wt") as fh:
         for m in mappings:
             fh.write(f"{m.pat.pattern} = {m.replacement_unsanitized}\n")
 
 
+def save_default_mappings(
+    mappings: List[TextMapping], version: VersionInfo, dest: Path
+):
+    memo = {
+        "version": version,
+        "mappings": [
+            f"{m.pat.pattern} = {m.replacement_unsanitized}" for m in mappings
+        ],
+    }
+    dest.write_text(yaml.dump(memo))
+
+
+def get_default_mapping_version():
+    return yaml.load(vars.default_mappings.read_text(), Loader=yaml.Loader)["version"]
+
+
 def export_mappings(
     mappings: List[TextMapping],
-    default_version: VersionInfo,
     dest: Path,
 ):
     memo = {
         "mappings": mappings,
-        "default_version": default_version,
+        "default_version": get_default_mapping_version(),
     }
 
     dest.write_text(yaml.dump(memo))
@@ -149,10 +189,11 @@ def import_mappings(
 ) -> VersionInfo:
     memo = yaml.load(src.read_text(), Loader=yaml.Loader)
     mappings: List[TextMapping] = memo["mappings"]
+    version: VersionInfo = memo["default_version"]
     user_mappings = [m for m in mappings if not m.is_default]
     default_mappings = [m for m in mappings if m.is_default]
 
-    save_mappings(user_mappings, user_mapping_dest)
-    save_mappings(default_mappings, default_mapping_dest)
+    save_user_mappings(user_mappings, user_mapping_dest)
+    save_default_mappings(default_mappings, version, default_mapping_dest)
 
-    return memo["default_version"]
+    return version

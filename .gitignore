@@ -9,4 +9,4 @@ scratch/
 versionfile.txt
 .pytest_cache/
 r.bat
-resources/mappings.default.txt
+resources/mappings.default.yaml

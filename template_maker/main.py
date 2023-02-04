@@ -11,6 +11,7 @@ from template_maker.generator_thread import GeneratorThread
 from template_maker.gui.app import App
 
 from template_maker.logger import setup_logger
+from template_maker.semver_util import extend_yaml_lib
 
 logger = setup_logger()
 
@@ -59,6 +60,8 @@ if __name__ == "__main__":
         ac_config = Path(ac_config)
     else:
         ac_config = Path(args.config)
+
+    extend_yaml_lib()
 
     job_id = uuid4()
     q: Queue = Queue()

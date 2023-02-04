@@ -24,7 +24,6 @@ class Config:
     remove_unrecognized: bool
     defaults_enabled: bool
     xtouch_mini_fs2020_aircraft_path: Path = field(init=False)
-    default_mapping_version: VersionInfo
     schema_version = SCHEMA_VERSION
 
     def __post_init__(self):
@@ -66,7 +65,6 @@ class Config:
             xtouch_mini_fs2020_path=xtouch_mini_fs2020_path.parent,
             remove_unrecognized=True,
             defaults_enabled=True,
-            default_mapping_version=VersionInfo(1, 0, 0),
         )
 
         memo.save()
@@ -82,18 +80,9 @@ class Config:
             dct["inkscape_path"] = Path(dct["inkscape_path"])
             dct["xtouch_mini_fs2020_path"] = Path(dct["xtouch_mini_fs2020_path"])
             dct["defaults_enabled"] = dct.get("defaults_enabled", True)
-            dct["default_mapping_version"] = VersionInfo.parse(
-                dct.get("default_mapping_version", "1.0.0")
-            )
             return cls(**dct)
 
         return cls.create()
-
-    @classmethod
-    def reset_default_mapping_version(cls) -> None:
-        k = cls.load()
-        k.default_mapping_version = VersionInfo.parse("1.0.0")
-        k.save()
 
     def save(self):
         memo = {
@@ -102,7 +91,6 @@ class Config:
             "remove_unrecognized": self.remove_unrecognized,
             "schema_version": self.schema_version,
             "xtouch_mini_fs2020_path": str(self.xtouch_mini_fs2020_path),
-            "default_mapping_version": str(self.default_mapping_version),
         }
         logger.info(f"Writing '{CONFIG_FILE}'")
         CONFIG_FILE.write_text(json.dumps(memo, sort_keys=True, indent=2))

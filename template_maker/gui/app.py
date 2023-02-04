@@ -26,13 +26,14 @@ from template_maker.gui.util import (
 )
 from template_maker.gui.label_mapping_editor import LabelMappingEditor
 from template_maker.logger import get_logger
-from template_maker.message import Message, MessageType
+from template_maker.mapping_update_check_thread import MappingUpdateCheckThread
+from template_maker.message import MappingUpdateCheckResult, Message, MessageType
 from template_maker.template_info import TemplateInfo
 
 
 from template_maker.text_mapping import (
     TextMapping,
-    save_mappings,
+    save_user_mappings,
 )
 from template_maker.update_check_thread import UpdateCheckResult, UpdateCheckThread
 from template_maker.utils import generate_mapping_templates
@@ -96,9 +97,7 @@ class App(tk.Tk):
         )
         self.mapping_menu.add_command(
             label="Export mappings...",
-            command=lambda: self.export_mappings(
-                self.current_template_info, self._config.default_mapping_version
-            ),
+            command=lambda: self.export_mappings(self.current_template_info),
         )
         self.mapping_menu.add_command(
             label="Import mappings...",
@@ -126,10 +125,10 @@ class App(tk.Tk):
             variable=self.desired_defaults_enabled,
         )
 
-        # self.mapping_menu.add_command(
-        #     label="Check for default updates",
-        #     command=noop,
-        # )
+        self.mapping_menu.add_command(
+            label="Check for default updates",
+            command=self.check_for_mapping_update,
+        )
 
         self.mapping_menu.add_command(
             label="Reset mappings",
@@ -179,6 +178,16 @@ class App(tk.Tk):
         t = UpdateCheckThread(job_id, self.queue, logger, VERSION)
         t.start()
 
+    def check_for_mapping_update(self):
+        job_id = uuid4()
+        logger.info(f"Submitting mapping update check job {job_id}")
+        t = MappingUpdateCheckThread(
+            job_id,
+            self.queue,
+            logger,
+        )
+        t.start()
+
     def check_queue(self):
         if not self.queue.empty():
             msg: Message = self.queue.get_nowait()
@@ -191,12 +200,41 @@ class App(tk.Tk):
                     self.process_generation_complete_message(msg.get_template_info())
                 else:
                     logger.info("Discarding unexpected message")
-            if msg.message_type == MessageType.UPDATE_CHECK_COMPLETE:
+            elif msg.message_type == MessageType.MAPPING_UPDATE_CHECK_COMPLETE:
+                self.process_mapping_update_check_complete_message(
+                    msg.get_mapping_update_check_result()
+                )
+            elif msg.message_type == MessageType.UPDATE_CHECK_COMPLETE:
                 self.process_update_check_complete_message(
                     msg.get_update_check_result()
                 )
 
         self.after(100, self.check_queue)
+
+    def process_mapping_update_check_complete_message(
+        self, update_check_result: MappingUpdateCheckResult
+    ):
+        update_check_title = "Mapping Update Check"
+        if (
+            update_check_result.latest_version is None
+            or update_check_result.error_message is not None
+        ):
+            msg = "Unable to do update check!"
+
+            if update_check_result.error_message is not None:
+                msg += f"\n\n{update_check_result.error_message}"
+
+            messagebox.showerror(update_check_title, msg)
+            return
+
+        if update_check_result.updated:
+            msg = f"Default mapping have been upgraded to new version {update_check_result.latest_version}."
+            messagebox.showinfo(update_check_title, msg)
+            self.reload()
+            return
+
+        msg = f"You have the latest default mappings."
+        messagebox.showinfo(update_check_title, msg)
 
     def process_update_check_complete_message(
         self, update_check_result: UpdateCheckResult
@@ -345,8 +383,7 @@ class App(tk.Tk):
                     user_mappings.append(m)
 
         user_mappings.sort()
-
-        save_mappings(user_mappings, vars.user_mappings)
+        save_user_mappings(user_mappings, vars.user_mappings)
         self.reload()
 
     def load_image(self, image_file_path: Path):
