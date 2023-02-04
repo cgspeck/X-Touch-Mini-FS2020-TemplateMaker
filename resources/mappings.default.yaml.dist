@@ -1,5 +1,5 @@
 ---
-version: 1.0.0
+version: !<VersionInfo> '1.0.0'
 mappings:
   - AP_AIRSPEED_HOLD = SPEED
   - AP_ALT_HOLD = ALT

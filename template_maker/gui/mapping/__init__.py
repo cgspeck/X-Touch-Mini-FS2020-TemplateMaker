@@ -51,6 +51,7 @@ def import_mappings(self: tk.Tk, config: Config, success_cb: Callable[[], None])
 
     fp = Path(filename)
     error_msg: Optional[str] = None
+    previous_mapping_version = text_mapping.get_default_mapping_version()
 
     try:
         new_mapping_version = text_mapping.import_mappings(
@@ -63,9 +64,9 @@ def import_mappings(self: tk.Tk, config: Config, success_cb: Callable[[], None])
         messagebox.showerror("Unable to load mappings", error_msg)
         return
 
-    msg = f"User and Default mappings have been loaded from {fp.name}"
+    msg = f"User and Default mappings have been loaded from '{fp.name}'."
 
-    if new_mapping_version != text_mapping.get_default_mapping_version():
+    if new_mapping_version != previous_mapping_version:
         msg += f"\n\nNew default mapping version is {new_mapping_version}"
 
     messagebox.showinfo(

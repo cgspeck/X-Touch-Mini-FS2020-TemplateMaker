@@ -113,7 +113,7 @@ def _parse_defaults_yaml_file() -> List[TextMapping]:
     fp = vars.default_mappings
     memo = []
 
-    dct = yaml.load(fp.read_text(), Loader=yaml.SafeLoader)
+    dct = yaml.load(fp.read_text(), Loader=yaml.Loader)
     for l in dct["mappings"]:
         l = l.strip()
         if len(l) == 0:
@@ -169,9 +169,7 @@ def save_default_mappings(
 
 
 def get_default_mapping_version():
-    return VersionInfo.parse(
-        yaml.load(vars.default_mappings.read_text(), Loader=yaml.SafeLoader)["version"]
-    )
+    return yaml.load(vars.default_mappings.read_text(), Loader=yaml.Loader)["version"]
 
 
 def export_mappings(
