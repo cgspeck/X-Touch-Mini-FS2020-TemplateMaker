@@ -81,7 +81,8 @@ def sanitise_replacement(original: str) -> str:
     return html.escape(original)
 
 
-def _parse_file(fp: Path, is_default: bool) -> List[TextMapping]:
+def _parse_user_txt_file() -> List[TextMapping]:
+    fp = vars.user_mappings
     memo = []
 
     txt = fp.read_text()
@@ -102,7 +103,32 @@ def _parse_file(fp: Path, is_default: bool) -> List[TextMapping]:
                 replacement=sanitise_replacement(v),
                 replacement_unsanitized=v,
                 in_use=False,
-                is_default=is_default,
+                is_default=False,
+            )
+        )
+    return memo
+
+
+def _parse_defaults_yaml_file() -> List[TextMapping]:
+    fp = vars.default_mappings
+    memo = []
+
+    dct = yaml.load(fp, Loader=yaml.SafeLoader)
+    for l in dct["mappings"]:
+        l = l.strip()
+        if len(l) == 0:
+            continue
+
+        k, v = l.split("=")
+        k = k.strip()
+        v = v.strip()
+        memo.append(
+            TextMapping(
+                pat=re.compile(k),
+                replacement=sanitise_replacement(v),
+                replacement_unsanitized=v,
+                in_use=False,
+                is_default=True,
             )
         )
     return memo
@@ -112,14 +138,14 @@ def load_mappings() -> List[TextMapping]:
     memo = []
 
     if vars.user_mappings.exists():
-        memo.extend(_parse_file(vars.user_mappings, is_default=False))
+        memo.extend(_parse_user_txt_file())
 
     if not vars.default_mappings.exists():
         shutil.copy(vars.default_mappings_dist, vars.default_mappings)
         Config.reset_default_mapping_version()
         logger.info("Default mappings were restored from dist file")
 
-    memo.extend(_parse_file(vars.default_mappings, is_default=True))
+    memo.extend(_parse_defaults_yaml_file())
     memo.sort()
 
     return memo
