@@ -48,8 +48,7 @@ class MappingUpdateCheckThread(Thread):
         try:
             fh = urllib.request.urlopen(LATEST_MAPPING_FILE)
             dct = yaml.load(fh.read(), Loader=yaml.Loader)
-            latest_version_str: str = dct["version"]
-            latest_version = VersionInfo.parse(latest_version_str)
+            latest_version: VersionInfo = dct["version"]
             current_mapping_version = get_default_mapping_version()
 
             if latest_version.major > MAX_MAJOR_VERSION:
