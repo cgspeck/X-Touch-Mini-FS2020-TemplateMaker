@@ -17,7 +17,6 @@ from template_maker import vars
 from typing import Optional
 from queue import Queue
 import urllib.request
-import json
 
 from semver import VersionInfo
 

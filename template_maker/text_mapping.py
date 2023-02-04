@@ -142,7 +142,6 @@ def load_mappings() -> List[TextMapping]:
 
     if not vars.default_mappings.exists():
         shutil.copy(vars.default_mappings_dist, vars.default_mappings)
-        Config.reset_default_mapping_version()
         logger.info("Default mappings were restored from dist file")
 
     memo.extend(_parse_defaults_yaml_file())
