@@ -33,7 +33,7 @@ from template_maker.template_info import TemplateInfo
 
 from template_maker.text_mapping import (
     TextMapping,
-    save_mappings,
+    save_user_mappings,
 )
 from template_maker.update_check_thread import UpdateCheckResult, UpdateCheckThread
 from template_maker.utils import generate_mapping_templates
@@ -97,9 +97,7 @@ class App(tk.Tk):
         )
         self.mapping_menu.add_command(
             label="Export mappings...",
-            command=lambda: self.export_mappings(
-                self.current_template_info, self._config.default_mapping_version
-            ),
+            command=lambda: self.export_mappings(self.current_template_info),
         )
         self.mapping_menu.add_command(
             label="Import mappings...",
@@ -184,7 +182,9 @@ class App(tk.Tk):
         job_id = uuid4()
         logger.info(f"Submitting mapping update check job {job_id}")
         t = MappingUpdateCheckThread(
-            job_id, self.queue, logger, self._config.default_mapping_version
+            job_id,
+            self.queue,
+            logger,
         )
         t.start()
 
@@ -383,8 +383,7 @@ class App(tk.Tk):
                     user_mappings.append(m)
 
         user_mappings.sort()
-
-        save_mappings(user_mappings, vars.user_mappings)
+        save_user_mappings(user_mappings, vars.user_mappings)
         self.reload()
 
     def load_image(self, image_file_path: Path):

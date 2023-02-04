@@ -113,7 +113,7 @@ def _parse_defaults_yaml_file() -> List[TextMapping]:
     fp = vars.default_mappings
     memo = []
 
-    dct = yaml.load(fp, Loader=yaml.SafeLoader)
+    dct = yaml.load(fp.read_text(), Loader=yaml.SafeLoader)
     for l in dct["mappings"]:
         l = l.strip()
         if len(l) == 0:
@@ -150,20 +150,37 @@ def load_mappings() -> List[TextMapping]:
     return memo
 
 
-def save_mappings(mappings: List[TextMapping], dest: Path):
+def save_user_mappings(mappings: List[TextMapping], dest: Path):
     with dest.open("wt") as fh:
         for m in mappings:
             fh.write(f"{m.pat.pattern} = {m.replacement_unsanitized}\n")
 
 
+def save_default_mappings(
+    mappings: List[TextMapping], version: VersionInfo, dest: Path
+):
+    memo = {
+        "version": version,
+        "mappings": [
+            f"{m.pat.pattern} = {m.replacement_unsanitized}" for m in mappings
+        ],
+    }
+    dest.write_text(yaml.dump(memo))
+
+
+def get_default_mapping_version():
+    return VersionInfo.parse(
+        yaml.load(vars.default_mappings.read_text(), Loader=yaml.SafeLoader)["version"]
+    )
+
+
 def export_mappings(
     mappings: List[TextMapping],
-    default_version: VersionInfo,
     dest: Path,
 ):
     memo = {
         "mappings": mappings,
-        "default_version": default_version,
+        "default_version": get_default_mapping_version(),
     }
 
     dest.write_text(yaml.dump(memo))
@@ -174,10 +191,11 @@ def import_mappings(
 ) -> VersionInfo:
     memo = yaml.load(src.read_text(), Loader=yaml.Loader)
     mappings: List[TextMapping] = memo["mappings"]
+    version: VersionInfo = memo["default_version"]
     user_mappings = [m for m in mappings if not m.is_default]
     default_mappings = [m for m in mappings if m.is_default]
 
-    save_mappings(user_mappings, user_mapping_dest)
-    save_mappings(default_mappings, default_mapping_dest)
+    save_user_mappings(user_mappings, user_mapping_dest)
+    save_default_mappings(default_mappings, version, default_mapping_dest)
 
-    return memo["default_version"]
+    return version

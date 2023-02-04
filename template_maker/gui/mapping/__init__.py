@@ -24,7 +24,6 @@ MAPPING_FILE_DESC = "Mapping Files"
 def export_mappings(
     self: tk.Tk,
     template_info: Optional[TemplateInfo],
-    default_version: VersionInfo,
 ):
     if template_info is None:
         return
@@ -37,7 +36,7 @@ def export_mappings(
         fp = fp.parent / (fp.name + f".{MAPPING_FILE_EXT}")
 
     logger.info(f"Writing {fp}")
-    text_mapping.export_mappings(template_info.mappings, default_version, Path(fp))
+    text_mapping.export_mappings(template_info.mappings, Path(fp))
 
 
 def import_mappings(self: tk.Tk, config: Config, success_cb: Callable[[], None]):
@@ -66,9 +65,7 @@ def import_mappings(self: tk.Tk, config: Config, success_cb: Callable[[], None])
 
     msg = f"User and Default mappings have been loaded from {fp.name}"
 
-    if new_mapping_version != config.default_mapping_version:
-        config.default_mapping_version = new_mapping_version
-        config.save()
+    if new_mapping_version != text_mapping.get_default_mapping_version():
         msg += f"\n\nNew default mapping version is {new_mapping_version}"
 
     messagebox.showinfo(

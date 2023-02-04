@@ -20,6 +20,8 @@ import urllib.request
 
 from semver import VersionInfo
 
+from template_maker.text_mapping import get_default_mapping_version
+
 
 LATEST_MAPPING_FILE = "https://raw.githubusercontent.com/cgspeck/X-Touch-Mini-FS2020-TemplateMaker-Mappings/main/mappings.default.yaml"
 MAX_MAJOR_VERSION = 1
@@ -45,12 +47,10 @@ class MappingUpdateCheckThread(Thread):
     def run(self):
         try:
             fh = urllib.request.urlopen(LATEST_MAPPING_FILE)
-            dct = yaml.load(fh, Loader=yaml.SafeLoader)
+            dct = yaml.load(fh.read(), Loader=yaml.SafeLoader)
             latest_version_str: str = dct["version"]
             latest_version = VersionInfo.parse(latest_version_str)
-            current_mapping_version = VersionInfo.parse(
-                yaml.load(vars.default_mappings, Loader=yaml.SafeLoader)["version"]
-            )
+            current_mapping_version = get_default_mapping_version()
 
             if latest_version.major > MAX_MAJOR_VERSION:
                 memo = MappingUpdateCheckResult(

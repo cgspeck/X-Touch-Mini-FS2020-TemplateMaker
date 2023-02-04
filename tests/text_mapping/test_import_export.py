@@ -5,11 +5,17 @@ from contextlib import contextmanager
 from io import StringIO
 from pathlib import Path
 from typing import List
+from unittest.mock import Mock, patch
+
 
 from pytest_insta import SnapshotFixture
 from semver import VersionInfo
 
-from template_maker.text_mapping import TextMapping, export_mappings, import_mappings
+from template_maker.text_mapping import (
+    TextMapping,
+    export_mappings,
+    import_mappings,
+)
 
 
 class AugmentedStringIo(StringIO):
@@ -21,7 +27,11 @@ class AugmentedStringIo(StringIO):
         self.write(s)
 
 
-def test_export_mappings(snapshot: SnapshotFixture):
+@patch("template_maker.text_mapping.get_default_mapping_version")
+def test_export_mappings(
+    mock_get_default_mapping_version: Mock, snapshot: SnapshotFixture
+):
+    mock_get_default_mapping_version.return_value = VersionInfo(3, 2, 1)
     mappings: List[TextMapping] = [
         TextMapping(
             pat=re.compile("pattern 1"),
@@ -36,9 +46,8 @@ def test_export_mappings(snapshot: SnapshotFixture):
             is_default=True,
         ),
     ]
-    default_version = VersionInfo(1, 2, 3)
     dest = AugmentedStringIo()
-    export_mappings(mappings, default_version, dest)  # type: ignore
+    export_mappings(mappings, dest)  # type: ignore
     dest.seek(0)
     actual = dest.read()
     assert snapshot("txt") == actual

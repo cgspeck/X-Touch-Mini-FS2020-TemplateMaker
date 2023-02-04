@@ -24,7 +24,6 @@ class Config:
     remove_unrecognized: bool
     defaults_enabled: bool
     xtouch_mini_fs2020_aircraft_path: Path = field(init=False)
-    default_mapping_version: VersionInfo
     schema_version = SCHEMA_VERSION
 
     def __post_init__(self):

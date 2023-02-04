@@ -1,2 +1,11 @@
-default pattern 1 = default unsanitised replacement 1
-default pattern 2 = default unsanitised replacement 2
+mappings:
+- default pattern 1 = default unsanitised replacement 1
+- default pattern 2 = default unsanitised replacement 2
+version: !!python/object/new:semver.VersionInfo
+  state: !!python/tuple
+  - null
+  - _build: null
+    _major: 1
+    _minor: 2
+    _patch: 3
+    _prerelease: null
