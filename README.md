@@ -17,7 +17,7 @@ You need to have the following installed to `c:`
 2. Unzip anywhere (e.g. `C:\bin\x-touch-template-maker`)
 3. Double-click / run the file `Xtouch Template Maker`, e.g. `C:\bin\x-touch-template-maker\Xtouch Template Maker.exe`
 
-**_IMPORTANT:_** The first time you run the application you may be blocked by a Windows Defender SmartScreen prompt ("**_Windows protected your PC..._**"). This is a niche hobby application, not a trojan/virus and you can validate this by uploading the release to [Virus Total](https://www.virustotal.com/gui/home/upload). **To get past the SmartScreen prompt, click "More Info" then "Run anyway"**
+**_IMPORTANT:_** The first time you run the application you may be blocked by a Windows Defender SmartScreen prompt ("**_Windows protected your PC..._**"). This is a niche open source application, not a trojan/virus and you can validate this by reviewing the source code and uploading the release to [Virus Total](https://www.virustotal.com/gui/home/upload). **To get past the SmartScreen prompt, click "More Info" then "Run anyway"**
 
 ## Development
 
