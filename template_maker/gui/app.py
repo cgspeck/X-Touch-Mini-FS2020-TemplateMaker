@@ -147,14 +147,16 @@ class App(tk.Tk):
         )
         self.menubar.add_cascade(label="Help", menu=self.helpmenu)
         self.config(menu=self.menubar)
-        self.resizable(False, False)
-
+        self.maxsize(PNG_DIM[0], PNG_DIM[1])
+        self.resizable(True, True)
         self.loaded_image_file_path: Optional[Path] = None
         self.current_template_info: Optional[TemplateInfo] = None
 
         self._config = config
         self.queue = queue
         self.pending_generation_job_id: Optional[UUID] = pending_generation_job_id
+
+        self.bind("<Configure>", self.resize)
         self.bind("<F5>", self.reload)
         self.show_progressbar()
         self.check_queue()
@@ -301,6 +303,17 @@ class App(tk.Tk):
 
         self.select_and_load(self.current_template_info.filepath)
 
+    def resize(self, event: Optional[Event] = None):
+        if event is not None and event.widget == self:
+            if self.window_width != event.width or self.window_height != event.height:
+                self.window_width = min(event.width, PNG_DIM[0])
+                self.window_height = min(event.height, PNG_DIM[1])
+                self.geometry("{}x{}".format(self.window_width, self.window_height))
+
+                if self.loaded_image_file_path is not None:
+                    self.nametowidget(f".{WIDGET_IMAGE_FRAME_NAME}").destroy()
+                    self.resize_and_display_image()
+
     def select_and_load(self, ac_config: Optional[Union[str, Path]]):
         if ac_config is None:
             ac_config = select_aircraft_config(
@@ -388,12 +401,18 @@ class App(tk.Tk):
 
     def load_image(self, image_file_path: Path):
         self.nametowidget(f"{WIDGET_PROCESS_PROGRESSBAR_NAME}").destroy()
-
         img = Image.open(image_file_path)
+        self.original_image = img
+        self.resize_and_display_image()
+        self.loaded_image_file_path = image_file_path
+        self.enable_template_loaded_menus()
+
+    def resize_and_display_image(self):
         window_width = self.window_width
         window_height = self.window_height
-        img.thumbnail((window_width, window_height), Image.Resampling.LANCZOS)
-        self.python_image = ImageTk.PhotoImage(img)
+        img_copy = self.original_image.copy()
+        img_copy.thumbnail((window_width, window_height), Image.Resampling.LANCZOS)
+        self.photo_image = ImageTk.PhotoImage(img_copy)
         frame = ttk.Frame(
             self,
             width=window_width,
@@ -401,10 +420,8 @@ class App(tk.Tk):
             name=WIDGET_IMAGE_FRAME_NAME,
         )
         frame.pack()
-        label = ttk.Label(frame, image=self.python_image)
+        label = ttk.Label(frame, image=self.photo_image)
         label.pack(fill="both", expand=True)
-        self.loaded_image_file_path = image_file_path
-        self.enable_template_loaded_menus()
 
     def save_png(self):
         if (
