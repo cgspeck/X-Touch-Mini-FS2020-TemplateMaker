@@ -85,19 +85,21 @@ def parse_aircraft_config(filepath: Path) -> TemplateInfo:
 
                 list_index = encoder_index - 1
                 primary_def = parse_event_press(encoder_blk.get("event_up", None))
-                secondary_def = parse_event_press(encoder_blk.get("event_press", None))
+                secondary_def: Optional[EventPressDefinition] = parse_event_press(
+                    encoder_blk.get("event_press", None)
+                )
 
                 if secondary_def is None:
                     secondary_def = parse_event_press(
                         encoder_blk.get("event_short_press", None)
                     )
 
-                tertiary_text = parse_event_press(
+                tertiary_def: Optional[EventPressDefinition] = parse_event_press(
                     encoder_blk.get("event_long_press", None)
                 )
 
-                if tertiary_text == secondary_def or tertiary_text == primary_def:
-                    tertiary_text = None
+                if tertiary_def == secondary_def or tertiary_def == primary_def:
+                    tertiary_def = None
 
                 if secondary_def == primary_def:
                     secondary_def = None
@@ -105,7 +107,7 @@ def parse_aircraft_config(filepath: Path) -> TemplateInfo:
                 encoders[list_index].layer_a = EncoderLabels(
                     primary=Label(primary_def),
                     secondary=Label(secondary_def),
-                    tertiary=Label(tertiary_text),
+                    tertiary=Label(tertiary_def),
                 )
 
         else:

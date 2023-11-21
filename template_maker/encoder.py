@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List, Optional
 
-from dataclasses_json import DataClassJsonMixin
+from dataclasses_json import DataClassJsonMixin, dataclass_json
 
 from template_maker import vars
 from template_maker.label import Label, gather_unmapped_label

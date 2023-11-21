@@ -1,6 +1,16 @@
 mappings:
-- default pattern 1 = default unsanitised replacement 1
-- default pattern 2 = default unsanitised replacement 2
+- !<TextMapping>
+  is_default: true
+  pat: default pattern 1
+  replacement_unsanitized: default unsanitised replacement 1
+  value_pat: !!python/object/apply:re._compile
+  - '2'
+  - 32
+- !<TextMapping>
+  is_default: true
+  pat: default pattern 2
+  replacement_unsanitized: default unsanitised replacement 2
+  value_pat: null
 version: !!python/object/new:semver.VersionInfo
   state: !!python/tuple
   - null

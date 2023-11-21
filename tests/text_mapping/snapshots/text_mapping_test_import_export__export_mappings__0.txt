@@ -11,7 +11,11 @@ mappings:
   is_default: false
   pat: pattern 1
   replacement_unsanitized: unsanitised replacement 1
+  value_pat: !!python/object/apply:re._compile
+  - val 1
+  - 32
 - !<TextMapping>
   is_default: true
   pat: pattern 2
   replacement_unsanitized: unsanitised replacement 2
+  value_pat: null

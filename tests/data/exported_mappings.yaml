@@ -10,16 +10,24 @@ mappings:
   - !<TextMapping>
     is_default: false
     pat: user pattern 1
+    value_pat: !!python/object/apply:re._compile
+      - "2"
+      - 32
     replacement_unsanitized: user unsanitised replacement 1
   - !<TextMapping>
     is_default: true
     pat: default pattern 1
+    value_pat: !!python/object/apply:re._compile
+      - "2"
+      - 32
     replacement_unsanitized: default unsanitised replacement 1
   - !<TextMapping>
     is_default: false
     pat: user pattern 2
+    value_pat: null
     replacement_unsanitized: user unsanitised replacement 2
   - !<TextMapping>
     is_default: true
     pat: default pattern 2
+    value_pat: null
     replacement_unsanitized: default unsanitised replacement 2

@@ -421,7 +421,7 @@ class App(tk.Tk):
             name=WIDGET_IMAGE_FRAME_NAME,
         )
         frame.pack()
-        label = ttk.Label(frame, image=self.photo_image)
+        label = ttk.Label(frame, image=self.photo_image)  # type: ignore
         label.pack(fill="both", expand=True)
 
     def save_png(self):

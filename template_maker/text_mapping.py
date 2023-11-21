@@ -76,7 +76,7 @@ def text_mapping_constructor(
     value = loader.construct_mapping(node)  # type: ignore
     replacement_unsanitized = value["replacement_unsanitized"]
 
-    value_pat = value["value_pat"]
+    value_pat = value.get("value_pat", None)
     if value_pat is not None:
         value_pat = re.compile(value_pat)
 

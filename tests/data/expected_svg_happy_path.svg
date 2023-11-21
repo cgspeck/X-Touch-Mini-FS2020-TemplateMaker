@@ -30,32 +30,32 @@
 <rect width="100%" height="100%" rx="15" fill="dimgray" mask="url(#encoder_holes)" />
 <text x="16.5" y="9" font-size="7" text-anchor="middle" fill="white" font-family="monospace">CRS</text>
 <text x="47.7" y="9" font-size="7" text-anchor="middle" fill="white" font-family="monospace">HDG</text>
-<text x="47.7" y="41.7" font-size="5" text-anchor="middle" fill="white" font-family="monospace">SET</text>
+<text x="47.7" y="41.7" font-size="3" text-anchor="middle" fill="white" font-family="monospace">SET</text>
 <text x="78.9" y="9" font-size="7" text-anchor="middle" fill="white" font-family="monospace">SPEED</text>
 <text x="110.1" y="9" font-size="7" text-anchor="middle" fill="white" font-family="monospace">ALT</text>
 <text x="141.3" y="9" font-size="7" text-anchor="middle" fill="white" font-family="monospace">VS</text>
-<text x="141.3" y="41.7" font-size="5" text-anchor="middle" fill="white" font-family="monospace">ATT</text>
+<text x="141.3" y="41.7" font-size="3" text-anchor="middle" fill="white" font-family="monospace">ATT</text>
 <text x="172.5" y="9" font-size="7" text-anchor="middle" fill="white" font-family="monospace">BARO</text>
-<text x="172.5" y="41.7" font-size="5" text-anchor="middle" fill="white" font-family="monospace">SET</text>
+<text x="172.5" y="41.7" font-size="3" text-anchor="middle" fill="white" font-family="monospace">SET</text>
 <text x="203.7" y="9" font-size="7" text-anchor="middle" fill="white" font-family="monospace">COM</text>
-<text x="203.7" y="41.7" font-size="5" text-anchor="middle" fill="white" font-family="monospace">&lt;-&gt;</text>
+<text x="203.7" y="41.7" font-size="3" text-anchor="middle" fill="white" font-family="monospace">&lt;-&gt;</text>
 <text x="234.9" y="9" font-size="7" text-anchor="middle" fill="white" font-family="monospace">NAV1</text>
-<text x="234.9" y="41.7" font-size="5" text-anchor="middle" fill="white" font-family="monospace">&lt;-&gt;</text>
-<text x="16.0" y="62.6" font-size="5" text-anchor="middle" fill="white" font-family="monospace">FD</text>
-<text x="47.2" y="62.6" font-size="5" text-anchor="middle" fill="white" font-family="monospace">HDG</text>
-<text x="78.4" y="62.6" font-size="5" text-anchor="middle" fill="white" font-family="monospace">SPEED</text>
-<text x="109.6" y="62.6" font-size="5" text-anchor="middle" fill="white" font-family="monospace">ALT</text>
-<text x="140.8" y="62.6" font-size="5" text-anchor="middle" fill="white" font-family="monospace">VS</text>
-<text x="172.0" y="62.6" font-size="5" text-anchor="middle" fill="white" font-family="monospace">BC</text>
-<text x="203.2" y="62.6" font-size="5" text-anchor="middle" fill="white" font-family="monospace">TOGA</text>
-<text x="234.4" y="62.6" font-size="5" text-anchor="middle" fill="white" font-family="monospace"></text>
-<text x="16.0" y="82.8" font-size="5" text-anchor="middle" fill="white" font-family="monospace">AP</text>
-<text x="47.2" y="82.8" font-size="5" text-anchor="middle" fill="white" font-family="monospace">NAV1</text>
-<text x="78.4" y="82.8" font-size="5" text-anchor="middle" fill="white" font-family="monospace">A/THR</text>
-<text x="109.6" y="82.8" font-size="5" text-anchor="middle" fill="white" font-family="monospace">FLC</text>
-<text x="140.8" y="82.8" font-size="5" text-anchor="middle" fill="white" font-family="monospace">LOC AVAIL</text>
-<text x="172.0" y="82.8" font-size="5" text-anchor="middle" fill="white" font-family="monospace">APPR</text>
-<text x="203.2" y="82.8" font-size="5" text-anchor="middle" fill="white" font-family="monospace">YAW DPNR</text>
-<text x="234.4" y="82.8" font-size="5" text-anchor="middle" fill="white" font-family="monospace"></text>
+<text x="234.9" y="41.7" font-size="3" text-anchor="middle" fill="white" font-family="monospace">&lt;-&gt;</text>
+<text x="16.0" y="62.6" font-size="3" text-anchor="middle" fill="white" font-family="monospace">FD</text>
+<text x="47.2" y="62.6" font-size="3" text-anchor="middle" fill="white" font-family="monospace">HDG</text>
+<text x="78.4" y="62.6" font-size="3" text-anchor="middle" fill="white" font-family="monospace">SPEED</text>
+<text x="109.6" y="62.6" font-size="3" text-anchor="middle" fill="white" font-family="monospace">ALT</text>
+<text x="140.8" y="62.6" font-size="3" text-anchor="middle" fill="white" font-family="monospace">VS</text>
+<text x="172.0" y="62.6" font-size="3" text-anchor="middle" fill="white" font-family="monospace">BC</text>
+<text x="203.2" y="62.6" font-size="3" text-anchor="middle" fill="white" font-family="monospace">TOGA</text>
+<text x="234.4" y="62.6" font-size="3" text-anchor="middle" fill="white" font-family="monospace"></text>
+<text x="16.0" y="82.8" font-size="3" text-anchor="middle" fill="white" font-family="monospace">AP</text>
+<text x="47.2" y="82.8" font-size="3" text-anchor="middle" fill="white" font-family="monospace">NAV1</text>
+<text x="78.4" y="82.8" font-size="3" text-anchor="middle" fill="white" font-family="monospace">A/THR</text>
+<text x="109.6" y="82.8" font-size="3" text-anchor="middle" fill="white" font-family="monospace">FLC</text>
+<text x="140.8" y="82.8" font-size="3" text-anchor="middle" fill="white" font-family="monospace">LOC AVAIL</text>
+<text x="172.0" y="82.8" font-size="3" text-anchor="middle" fill="white" font-family="monospace">APPR</text>
+<text x="203.2" y="82.8" font-size="3" text-anchor="middle" fill="white" font-family="monospace">YAW DPNR</text>
+<text x="234.4" y="82.8" font-size="3" text-anchor="middle" fill="white" font-family="monospace"></text>
 </g>
 </svg>

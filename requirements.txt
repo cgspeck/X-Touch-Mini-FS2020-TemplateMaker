@@ -1,4 +1,4 @@
-dataclasses-json==0.5.7
+dataclasses-json==0.6.2
 Pillow==9.3.0
 pywin32==305
 PyYAML==6.0
