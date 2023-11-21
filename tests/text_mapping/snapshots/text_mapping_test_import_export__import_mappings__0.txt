@@ -1,2 +1,22 @@
-user pattern 1 = user unsanitised replacement 1
-user pattern 2 = user unsanitised replacement 2
+!!python/object:template_maker.text_mapping.SerializedMappingCollection
+mappings:
+- !<TextMapping>
+  is_default: false
+  pat: user pattern 1
+  replacement_unsanitized: user unsanitised replacement 1
+  value_pat: !!python/object/apply:re._compile
+  - '2'
+  - 32
+- !<TextMapping>
+  is_default: false
+  pat: user pattern 2
+  replacement_unsanitized: user unsanitised replacement 2
+  value_pat: null
+schema_version: !!python/object/new:semver.VersionInfo
+  state: !!python/tuple
+  - null
+  - _build: null
+    _major: 2
+    _minor: 0
+    _patch: 0
+    _prerelease: null

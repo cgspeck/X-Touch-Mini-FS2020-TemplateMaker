@@ -42,7 +42,15 @@ class LabelMappingEditor(tk.Toplevel):
         )
         cb.grid(row=0, column=0, sticky="nsew", columnspan=2)
 
-        columns = ("edit", "delete", "pattern", "replacement", "in_use", "is_default")
+        columns = (
+            "edit",
+            "delete",
+            "pattern",
+            "value_pattern",
+            "replacement",
+            "in_use",
+            "is_default",
+        )
         tree = ttk.Treeview(
             self, columns=columns, show="headings", name=ITEM_TREEVIEW_NAME
         )
@@ -55,6 +63,7 @@ class LabelMappingEditor(tk.Toplevel):
         tree.heading("edit", text="Edit")
         tree.heading("delete", text="Delete")
         tree.heading("pattern", text="Pattern")
+        tree.heading("value_pattern", text="Value Pattern")
         tree.heading("replacement", text="Replacement")
         tree.heading("in_use", text="In Use?")
         tree.heading("is_default", text="Default Mapping?")
@@ -99,6 +108,10 @@ class LabelMappingEditor(tk.Toplevel):
             if m.deletable:
                 del_text = DELETE_TEXT
 
+            value_pat = None
+            if m.value_pat is not None:
+                value_pat = m.value_pat.pattern
+
             tree.insert(
                 "",
                 tk.END,
@@ -106,6 +119,7 @@ class LabelMappingEditor(tk.Toplevel):
                     EDIT_TEXT,
                     del_text,
                     m.pat.pattern,
+                    value_pat,
                     m.replacement_unsanitized,
                     in_use,
                     is_default,
@@ -132,12 +146,12 @@ class LabelMappingEditor(tk.Toplevel):
         self,
         treeview: ttk.Treeview,
         pattern: str,
+        value_pattern: str,
         replacement: str,
         in_use: str,
         treeview_index: int,
         item_id: str,
     ):
-
         try:
             re_pat = re.compile(pattern)
         except:
@@ -146,9 +160,22 @@ class LabelMappingEditor(tk.Toplevel):
             )
             return False
 
+        re_value_pattern = None
+
+        if value_pattern is not None:
+            try:
+                re_value_pattern = re.compile(value_pattern)
+            except:
+                messagebox.showerror(
+                    "Update failed",
+                    f"Unable to update entry, invalid value pattern '{value_pattern}'",
+                )
+                return False
+
         # update mappings!
         mapping_index = int(item_id.split("-")[1])
         self.mappings[mapping_index].pat = re_pat
+        self.mappings[mapping_index].value_pat = re_value_pattern
         self.mappings[mapping_index].replacement = sanitise_replacement(replacement)
         self.mappings[mapping_index].replacement_unsanitized = replacement
         self.mappings[mapping_index].modified = True
@@ -165,6 +192,7 @@ class LabelMappingEditor(tk.Toplevel):
                 EDIT_TEXT,
                 DELETE_TEXT,
                 pattern,
+                value_pattern,
                 replacement,
                 in_use,
                 is_default,
@@ -204,24 +232,31 @@ class LabelMappingEditor(tk.Toplevel):
                 values = treeView.item(child)["values"]
                 break
 
-        col1Lbl = ttk.Label(win, text="Regex Search Pattern: ")
-        col1Ent = ttk.Entry(win)
-        col1Ent.insert(0, values[2])  # Default is column 1's current value
-        col1Lbl.grid(row=0, column=0)
-        col1Ent.grid(row=0, column=1)
+        patLbl = ttk.Label(win, text="Regex Search Pattern: ")
+        patEnt = ttk.Entry(win)
+        patEnt.insert(0, values[2])  # Default is column 1's current value
+        patLbl.grid(row=0, column=0)
+        patEnt.grid(row=0, column=1)
 
-        col2Lbl = ttk.Label(win, text="Replacement: ")
-        col2Ent = ttk.Entry(win)
-        col2Ent.insert(0, values[3])  # Default is column 2's current value
-        col2Lbl.grid(row=0, column=2)
-        col2Ent.grid(row=0, column=3)
+        valPatLbl = ttk.Label(win, text="Value Regex Search Pattern: ")
+        valPatEnt = ttk.Entry(win)
+        valPatEnt.insert(0, values[3])  # Default is column 1's current value
+        valPatLbl.grid(row=1, column=0)
+        valPatEnt.grid(row=1, column=1)
+
+        replacementLbl = ttk.Label(win, text="Replacement: ")
+        replacementEnt = ttk.Entry(win)
+        replacementEnt.insert(0, values[4])  # Default is column 2's current value
+        replacementLbl.grid(row=2, column=0)
+        replacementEnt.grid(row=2, column=1)
 
         def update_then_destroy():
             if self.validate_update(
                 treeview=treeView,
-                pattern=col1Ent.get(),
-                replacement=col2Ent.get(),
-                in_use=values[4],
+                pattern=patEnt.get(),
+                value_pattern=valPatEnt.get(),
+                replacement=replacementEnt.get(),
+                in_use=values[5],
                 treeview_index=current_index,
                 item_id=entry_id,
             ):
@@ -229,11 +264,11 @@ class LabelMappingEditor(tk.Toplevel):
 
         okButt = ttk.Button(win, text="Ok")
         okButt.bind("<Button-1>", lambda e: update_then_destroy())
-        okButt.grid(row=1, column=4)
+        okButt.grid(row=3, column=0)
 
         canButt = ttk.Button(win, text="Cancel")
         canButt.bind("<Button-1>", lambda c: win.destroy())
-        canButt.grid(row=1, column=5)
+        canButt.grid(row=3, column=1)
 
     def do_item_delete(self, treeview: ttk.Treeview, item_id: str):
         mapping_index = int(item_id.split("-")[1])

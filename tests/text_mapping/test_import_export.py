@@ -35,12 +35,14 @@ def test_export_mappings(
     mappings: List[TextMapping] = [
         TextMapping(
             pat=re.compile("pattern 1"),
+            value_pat=re.compile("val 1"),
             replacement="replacement 1",
             replacement_unsanitized="unsanitised replacement 1",
             is_default=False,
         ),
         TextMapping(
             pat=re.compile("pattern 2"),
+            value_pat=None,
             replacement="replacement 2",
             replacement_unsanitized="unsanitised replacement 2",
             is_default=True,

@@ -4,12 +4,18 @@
       "index": 1,
       "layer_a": {
         "primary": {
-          "original": "TOGGLE_FLIGHT_DIRECTOR",
+          "original": {
+            "event": "TOGGLE_FLIGHT_DIRECTOR",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -20,12 +26,18 @@
       "index": 2,
       "layer_a": {
         "primary": {
-          "original": "AP_HDG_HOLD",
+          "original": {
+            "event": "AP_HDG_HOLD",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -36,12 +48,18 @@
       "index": 3,
       "layer_a": {
         "primary": {
-          "original": "AP_AIRSPEED_HOLD",
+          "original": {
+            "event": "AP_AIRSPEED_HOLD",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -52,12 +70,18 @@
       "index": 4,
       "layer_a": {
         "primary": {
-          "original": "AP_ALT_HOLD",
+          "original": {
+            "event": "AP_ALT_HOLD",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -68,12 +92,18 @@
       "index": 5,
       "layer_a": {
         "primary": {
-          "original": "AP_VS_HOLD",
+          "original": {
+            "event": "AP_VS_HOLD",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -84,12 +114,18 @@
       "index": 6,
       "layer_a": {
         "primary": {
-          "original": "AP_BC_HOLD",
+          "original": {
+            "event": "AP_BC_HOLD",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -100,12 +136,18 @@
       "index": 7,
       "layer_a": {
         "primary": {
-          "original": "AUTO_THROTTLE_TO_GA",
+          "original": {
+            "event": "AUTO_THROTTLE_TO_GA",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -116,7 +158,10 @@
       "index": 8,
       "layer_a": {
         "primary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
@@ -132,12 +177,18 @@
       "index": 9,
       "layer_a": {
         "primary": {
-          "original": "AP_MASTER",
+          "original": {
+            "event": "AP_MASTER",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -148,12 +199,18 @@
       "index": 10,
       "layer_a": {
         "primary": {
-          "original": "AP_NAV1_HOLD",
+          "original": {
+            "event": "AP_NAV1_HOLD",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -164,12 +221,18 @@
       "index": 11,
       "layer_a": {
         "primary": {
-          "original": "AUTO_THROTTLE_ARM",
+          "original": {
+            "event": "AUTO_THROTTLE_ARM",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -180,12 +243,18 @@
       "index": 12,
       "layer_a": {
         "primary": {
-          "original": "FLIGHT_LEVEL_CHANGE",
+          "original": {
+            "event": "FLIGHT_LEVEL_CHANGE",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -196,12 +265,18 @@
       "index": 13,
       "layer_a": {
         "primary": {
-          "original": "AP_LOC_HOLD",
+          "original": {
+            "event": "AP_LOC_HOLD",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -212,12 +287,18 @@
       "index": 14,
       "layer_a": {
         "primary": {
-          "original": "AP_APR_HOLD",
+          "original": {
+            "event": "AP_APR_HOLD",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -228,12 +309,18 @@
       "index": 15,
       "layer_a": {
         "primary": {
-          "original": "YAW_DAMPER_TOGGLE",
+          "original": {
+            "event": "YAW_DAMPER_TOGGLE",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -244,7 +331,10 @@
       "index": 16,
       "layer_a": {
         "primary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
@@ -262,12 +352,18 @@
       "index": 1,
       "layer_a": {
         "primary": {
-          "original": "VOR1_OBI_INC",
+          "original": {
+            "event": "VOR1_OBI_INC",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": "{alternate}",
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
@@ -283,17 +379,26 @@
       "index": 2,
       "layer_a": {
         "primary": {
-          "original": "HEADING_BUG_INC",
+          "original": {
+            "event": "HEADING_BUG_INC",
+            "value": "1"
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": "HEADING_BUG_SET",
+          "original": {
+            "event": "HEADING_BUG_SET",
+            "value": "1"
+          },
           "display": null,
           "replaced": false
         },
         "tertiary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -304,12 +409,18 @@
       "index": 3,
       "layer_a": {
         "primary": {
-          "original": "AP_SPD_VAR_INC",
+          "original": {
+            "event": "AP_SPD_VAR_INC",
+            "value": "1"
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
@@ -325,12 +436,18 @@
       "index": 4,
       "layer_a": {
         "primary": {
-          "original": "AP_ALT_VAR_INC",
+          "original": {
+            "event": "AP_ALT_VAR_INC",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
@@ -346,17 +463,26 @@
       "index": 5,
       "layer_a": {
         "primary": {
-          "original": "AP_VS_VAR_INC",
+          "original": {
+            "event": "AP_VS_VAR_INC",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": "AP_ATT_HOLD",
+          "original": {
+            "event": "AP_ATT_HOLD",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "tertiary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -367,17 +493,26 @@
       "index": 6,
       "layer_a": {
         "primary": {
-          "original": "KOHLSMAN_INC",
+          "original": {
+            "event": "KOHLSMAN_INC",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": "KOHLSMAN_SET",
+          "original": {
+            "event": "KOHLSMAN_SET",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "tertiary": {
-          "original": null,
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -388,17 +523,26 @@
       "index": 7,
       "layer_a": {
         "primary": {
-          "original": "COM_RADIO_WHOLE_INC",
+          "original": {
+            "event": "COM_RADIO_WHOLE_INC",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": "{alternate}",
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "tertiary": {
-          "original": "COM_STBY_RADIO_SWAP",
+          "original": {
+            "event": "COM_STBY_RADIO_SWAP",
+            "value": null
+          },
           "display": null,
           "replaced": false
         }
@@ -409,17 +553,26 @@
       "index": 8,
       "layer_a": {
         "primary": {
-          "original": "NAV1_RADIO_WHOLE_INC",
+          "original": {
+            "event": "NAV1_RADIO_WHOLE_INC",
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "secondary": {
-          "original": "{alternate}",
+          "original": {
+            "event": null,
+            "value": null
+          },
           "display": null,
           "replaced": false
         },
         "tertiary": {
-          "original": "NAV1_RADIO_SWAP",
+          "original": {
+            "event": "NAV1_RADIO_SWAP",
+            "value": null
+          },
           "display": null,
           "replaced": false
         }

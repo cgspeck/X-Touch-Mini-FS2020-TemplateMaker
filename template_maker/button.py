@@ -14,7 +14,7 @@ button_x_dist = 31.2
 button_y_origin = 47.6
 button_y_dist = 20.2
 label_y_gap = 5
-button_font_size = 5
+button_font_size = 3
 
 
 @dataclass

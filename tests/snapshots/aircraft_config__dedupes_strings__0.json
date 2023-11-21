@@ -1,0 +1,230 @@
+[
+  {
+    "index": 1,
+    "layer_a": {
+      "primary": {
+        "original": {
+          "event": "KOHLSMAN_INC",
+          "value": null
+        },
+        "display": null,
+        "replaced": false
+      },
+      "secondary": {
+        "original": null,
+        "display": null,
+        "replaced": false
+      },
+      "tertiary": {
+        "original": {
+          "event": null,
+          "value": null
+        },
+        "display": null,
+        "replaced": false
+      }
+    },
+    "layer_b": null
+  },
+  {
+    "index": 2,
+    "layer_a": {
+      "primary": {
+        "original": {
+          "event": "AP_SPD_VAR_INC",
+          "value": null
+        },
+        "display": null,
+        "replaced": false
+      },
+      "secondary": {
+        "original": {
+          "event": "SPEED_SLOT_INDEX_SET",
+          "value": "1"
+        },
+        "display": null,
+        "replaced": false
+      },
+      "tertiary": {
+        "original": {
+          "event": "SPEED_SLOT_INDEX_SET",
+          "value": "2"
+        },
+        "display": null,
+        "replaced": false
+      }
+    },
+    "layer_b": null
+  },
+  {
+    "index": 3,
+    "layer_a": {
+      "primary": {
+        "original": {
+          "event": "HEADING_BUG_INC",
+          "value": null
+        },
+        "display": null,
+        "replaced": false
+      },
+      "secondary": {
+        "original": {
+          "event": "HEADING_SLOT_INDEX_SET",
+          "value": "1"
+        },
+        "display": null,
+        "replaced": false
+      },
+      "tertiary": {
+        "original": {
+          "event": "HEADING_SLOT_INDEX_SET",
+          "value": "2"
+        },
+        "display": null,
+        "replaced": false
+      }
+    },
+    "layer_b": null
+  },
+  {
+    "index": 4,
+    "layer_a": {
+      "primary": {
+        "original": {
+          "event": "AP_ALT_VAR_INC",
+          "value": null
+        },
+        "display": null,
+        "replaced": false
+      },
+      "secondary": {
+        "original": {
+          "event": "AP_ALT_VAR_INC",
+          "value": "1"
+        },
+        "display": null,
+        "replaced": false
+      },
+      "tertiary": {
+        "original": {
+          "event": "ALTITUDE_SLOT_INDEX_SET",
+          "value": "2"
+        },
+        "display": null,
+        "replaced": false
+      }
+    },
+    "layer_b": null
+  },
+  {
+    "index": 5,
+    "layer_a": {
+      "primary": {
+        "original": {
+          "event": "FOO",
+          "value": null
+        },
+        "display": null,
+        "replaced": false
+      },
+      "secondary": {
+        "original": {
+          "event": null,
+          "value": null
+        },
+        "display": null,
+        "replaced": false
+      },
+      "tertiary": {
+        "original": null,
+        "display": null,
+        "replaced": false
+      }
+    },
+    "layer_b": null
+  },
+  {
+    "index": 6,
+    "layer_a": {
+      "primary": {
+        "original": {
+          "event": "NAV1_RADIO_WHOLE_INC",
+          "value": null
+        },
+        "display": null,
+        "replaced": false
+      },
+      "secondary": {
+        "original": {
+          "event": null,
+          "value": null
+        },
+        "display": null,
+        "replaced": false
+      },
+      "tertiary": {
+        "original": {
+          "event": "NAV1_RADIO_SWAP",
+          "value": null
+        },
+        "display": null,
+        "replaced": false
+      }
+    },
+    "layer_b": null
+  },
+  {
+    "index": 7,
+    "layer_a": {
+      "primary": {
+        "original": {
+          "event": "ELEV_TRIM_UP",
+          "value": null
+        },
+        "display": null,
+        "replaced": false
+      },
+      "secondary": {
+        "original": {
+          "event": null,
+          "value": null
+        },
+        "display": null,
+        "replaced": false
+      },
+      "tertiary": {
+        "original": null,
+        "display": null,
+        "replaced": false
+      }
+    },
+    "layer_b": null
+  },
+  {
+    "index": 8,
+    "layer_a": {
+      "primary": {
+        "original": {
+          "event": "Functions/A320/mfd-range-up.jinja2",
+          "value": null
+        },
+        "display": null,
+        "replaced": false
+      },
+      "secondary": {
+        "original": {
+          "event": null,
+          "value": null
+        },
+        "display": null,
+        "replaced": false
+      },
+      "tertiary": {
+        "original": null,
+        "display": null,
+        "replaced": false
+      }
+    },
+    "layer_b": null
+  }
+]

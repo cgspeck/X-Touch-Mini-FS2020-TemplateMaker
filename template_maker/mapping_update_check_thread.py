@@ -24,7 +24,7 @@ from template_maker.text_mapping import get_default_mapping_version
 
 
 LATEST_MAPPING_FILE = "https://raw.githubusercontent.com/cgspeck/X-Touch-Mini-FS2020-TemplateMaker-Mappings/main/mappings.default.yaml"
-MAX_MAJOR_VERSION = 1
+MAX_MAJOR_VERSION = 2
 
 
 class MappingUpdateCheckThread(Thread):
