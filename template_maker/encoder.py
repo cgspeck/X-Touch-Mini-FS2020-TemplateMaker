@@ -16,7 +16,7 @@ encoder_rad = encoder_dia / 2
 encoder_y_primary_text = 9
 encoder_y_secondary_text = encoder_y_origin + encoder_dia + 6
 encoder_primary_font_size = 7
-encoder_secondary_font_size = 5
+encoder_secondary_font_size = 3
 
 
 @dataclass
@@ -94,7 +94,7 @@ class Encoder(DataClassJsonMixin):
             tertiary = layer_a.tertiary.display
 
         if secondary is not None and tertiary is not None:
-            memo = f'<text x="{self.mid_x}" y="{encoder_y_secondary_text}" font-size="{encoder_secondary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{secondary} ({tertiary})</text>\n'
+            memo = f'<text x="{self.mid_x}" y="{encoder_y_secondary_text}" font-size="{encoder_secondary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{secondary} / {tertiary}</text>\n'
         elif secondary is not None:
             memo = f'<text x="{self.mid_x}" y="{encoder_y_secondary_text}" font-size="{encoder_secondary_font_size}" text-anchor="middle" fill="white" font-family="{vars.font_family}">{secondary}</text>\n'
         elif tertiary is not None:

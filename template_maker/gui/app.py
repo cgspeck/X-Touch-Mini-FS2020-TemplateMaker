@@ -1,4 +1,5 @@
 from copy import deepcopy
+from pprint import pformat
 from queue import Queue
 import shutil
 import tkinter as tk
@@ -193,7 +194,7 @@ class App(tk.Tk):
     def check_queue(self):
         if not self.queue.empty():
             msg: Message = self.queue.get_nowait()
-            logger.info(f"Received message {msg}")
+            logger.info(f"Received message {pformat(msg)}")
 
             if msg.message_type == MessageType.GENERATION_COMPLETE:
                 if msg.job_id == self.pending_generation_job_id:

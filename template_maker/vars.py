@@ -32,7 +32,5 @@ if resources_path is None:
 default_mappings_dist = Path(resources_path, "mappings.default.yaml.dist")
 default_mappings = Path(resources_path, "mappings.default.yaml")
 
-user_mappings = Path(data_path, "mappings.local.txt")
-
-if not user_mappings.exists():
-    user_mappings.touch()
+user_mappings_legacy = Path(data_path, "mappings.local.txt")
+user_mappings = Path(data_path, "mappings.local.yaml")

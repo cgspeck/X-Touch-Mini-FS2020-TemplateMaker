@@ -3,6 +3,7 @@ import json
 from typing import Any, List, Mapping, Optional, Union
 
 from template_maker.button import Button, ButtonLabels
+from template_maker.datadefs import EventPressDefinition
 from template_maker.label import Label
 from template_maker.template_info import TemplateInfo
 from template_maker.encoder import Encoder, EncoderLabels
@@ -10,20 +11,25 @@ from template_maker.encoder import Encoder, EncoderLabels
 
 def parse_event_press(
     blk: Optional[Union[str, List[str], Mapping[str, Any]]]
-) -> Optional[str]:
-    if blk is None:
-        return None
+) -> EventPressDefinition:
+    event = None
+    value = None
 
-    if isinstance(blk, str):
-        return blk
+    match blk:
+        case str():
+            event = blk
+        case list():
+            event = "_".join(blk)
+        case dict():
+            event = blk.get("event", None)
+            value = blk.get("value", None)
+            # n.b. the values are usually ints?
+            if value is not None:
+                value = str(value)
+        case _:
+            event = None
 
-    if isinstance(blk, list) and len(blk) > 0:
-        return "_".join(blk)
-
-    if isinstance(blk, Mapping):
-        return blk.get("event", None)
-
-    return None
+    return EventPressDefinition(event, value)
 
 
 def parse_aircraft_config(filepath: Path) -> TemplateInfo:
@@ -78,11 +84,11 @@ def parse_aircraft_config(filepath: Path) -> TemplateInfo:
                     continue
 
                 list_index = encoder_index - 1
-                primary_text = parse_event_press(encoder_blk.get("event_up", None))
-                secondary_text = parse_event_press(encoder_blk.get("event_press", None))
+                primary_def = parse_event_press(encoder_blk.get("event_up", None))
+                secondary_def = parse_event_press(encoder_blk.get("event_press", None))
 
-                if secondary_text is None:
-                    secondary_text = parse_event_press(
+                if secondary_def is None:
+                    secondary_def = parse_event_press(
                         encoder_blk.get("event_short_press", None)
                     )
 
@@ -90,15 +96,15 @@ def parse_aircraft_config(filepath: Path) -> TemplateInfo:
                     encoder_blk.get("event_long_press", None)
                 )
 
-                if tertiary_text == secondary_text or tertiary_text == primary_text:
+                if tertiary_text == secondary_def or tertiary_text == primary_def:
                     tertiary_text = None
 
-                if secondary_text == primary_text:
-                    secondary_text = None
+                if secondary_def == primary_def:
+                    secondary_def = None
 
                 encoders[list_index].layer_a = EncoderLabels(
-                    primary=Label(primary_text),
-                    secondary=Label(secondary_text),
+                    primary=Label(primary_def),
+                    secondary=Label(secondary_def),
                     tertiary=Label(tertiary_text),
                 )
 
@@ -112,22 +118,22 @@ def parse_aircraft_config(filepath: Path) -> TemplateInfo:
                     continue
 
                 list_index = button_index - 1
-                primary_text = parse_event_press(button_blk.get("event_press", None))
+                primary_def = parse_event_press(button_blk.get("event_press", None))
 
-                if primary_text is None:
-                    primary_text = parse_event_press(
+                if primary_def is None:
+                    primary_def = parse_event_press(
                         button_blk.get("event_short_press", None)
                     )
 
-                secondary_text = parse_event_press(
+                secondary_def = parse_event_press(
                     button_blk.get("event_long_press", None)
                 )
 
-                if secondary_text == primary_text:
-                    secondary_text = None
+                if secondary_def == primary_def:
+                    secondary_def = None
 
                 buttons[list_index].layer_a = ButtonLabels(
-                    primary=Label(primary_text), secondary=Label(secondary_text)
+                    primary=Label(primary_def), secondary=Label(secondary_def)
                 )
         else:
             error_msgs.append('"buttons" key not found')

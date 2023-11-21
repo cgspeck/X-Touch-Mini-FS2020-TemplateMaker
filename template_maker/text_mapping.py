@@ -1,10 +1,11 @@
+from __future__ import annotations
 import html
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from re import Pattern
 import shutil
-from typing import Any, List, Union
+from typing import Any, List, Optional, Union
 
 import yaml
 from dataclasses_json import DataClassJsonMixin
@@ -12,17 +13,25 @@ from semver import VersionInfo
 from yaml import FullLoader, Loader, UnsafeLoader
 
 from template_maker import vars
-from template_maker.config import Config
 from template_maker.logger import get_logger
 
 DEFAULT_REPLACEMENT_TEXT = "SET ME!"
 
 logger = get_logger()
 
+SCHEMA_VERSION = VersionInfo(2, 0, 0)
+
+
+@dataclass
+class SerializedMappingCollection:
+    mappings: List[TextMapping]
+    schema_version: VersionInfo
+
 
 @dataclass
 class TextMapping(DataClassJsonMixin):
     pat: Pattern
+    value_pat: Optional[Pattern]
     replacement: str
     replacement_unsanitized: str
     in_use: bool = False
@@ -54,6 +63,7 @@ def text_mapping_representer(dumper: yaml.dumper.Dumper, data: TextMapping):
         "TextMapping",
         {
             "pat": data.pat.pattern,
+            "value_pat": data.value_pat,
             "replacement_unsanitized": data.replacement_unsanitized,
             "is_default": data.is_default,
         },
@@ -65,8 +75,14 @@ def text_mapping_constructor(
 ):
     value = loader.construct_mapping(node)  # type: ignore
     replacement_unsanitized = value["replacement_unsanitized"]
+
+    value_pat = value["value_pat"]
+    if value_pat is not None:
+        value_pat = re.compile(value_pat)
+
     return TextMapping(
         pat=re.compile(value["pat"]),
+        value_pat=value_pat,
         replacement_unsanitized=replacement_unsanitized,
         replacement=sanitise_replacement(replacement_unsanitized),
         is_default=value["is_default"],
@@ -81,8 +97,8 @@ def sanitise_replacement(original: str) -> str:
     return html.escape(original)
 
 
-def _parse_user_txt_file() -> List[TextMapping]:
-    fp = vars.user_mappings
+def _legacy_parse_user_txt_file() -> List[TextMapping]:
+    fp = vars.user_mappings_legacy
     memo = []
 
     txt = fp.read_text()
@@ -100,6 +116,7 @@ def _parse_user_txt_file() -> List[TextMapping]:
         memo.append(
             TextMapping(
                 pat=re.compile(k),
+                value_pat=None,
                 replacement=sanitise_replacement(v),
                 replacement_unsanitized=v,
                 in_use=False,
@@ -112,33 +129,63 @@ def _parse_user_txt_file() -> List[TextMapping]:
 def _parse_defaults_yaml_file() -> List[TextMapping]:
     fp = vars.default_mappings
     memo = []
-
     dct = yaml.load(fp.read_text(), Loader=yaml.Loader)
-    for l in dct["mappings"]:
-        l = l.strip()
-        if len(l) == 0:
-            continue
+    must_update = False
+    for mapping in dct["mappings"]:
+        match mapping:
+            case str():
+                logger.info("Parsing legacy default mapping definition")
+                mapping = mapping.strip()
+                if len(mapping) == 0:
+                    continue
 
-        k, v = l.split("=")
-        k = k.strip()
-        v = v.strip()
-        memo.append(
-            TextMapping(
-                pat=re.compile(k),
-                replacement=sanitise_replacement(v),
-                replacement_unsanitized=v,
-                in_use=False,
-                is_default=True,
-            )
-        )
+                k, v = mapping.split("=")
+                k = k.strip()
+                v = v.strip()
+                memo.append(
+                    TextMapping(
+                        pat=re.compile(k),
+                        value_pat=None,
+                        replacement=sanitise_replacement(v),
+                        replacement_unsanitized=v,
+                        in_use=False,
+                        is_default=True,
+                    )
+                )
+                must_update = True
+            case TextMapping():
+                memo.append(mapping)
+            case _:
+                raise ValueError(f"Unexpected type for mapping block: ${type(mapping)}")
+
+    if must_update:
+        logger.info("Updating defaults file to new version...")
+        mappings_version = get_default_mapping_version()
+        save_default_mappings(memo, mappings_version, vars.default_mappings)
+
     return memo
 
 
 def load_mappings() -> List[TextMapping]:
     memo = []
 
-    if vars.user_mappings.exists():
-        memo.extend(_parse_user_txt_file())
+    if vars.user_mappings_legacy.exists():
+        try:
+            memo.extend(_legacy_parse_user_txt_file())
+        except Exception as e:
+            logger.error("Error loading legacy user mapping file", e)
+        else:
+            logger.info("Upgrading legacy mappings...")
+            save_user_mappings(memo, vars.user_mappings)
+        finally:
+            logger.error("Deleting legacy mapping file")
+            vars.user_mappings_legacy.unlink()
+    elif vars.user_mappings.exists():
+        try:
+            logger.info("Loading user mappings")
+            memo.extend(load_user_mappings(vars.user_mappings))
+        except Exception as e:
+            logger.error("Error loading user mapping file", e)
 
     if not vars.default_mappings.exists():
         shutil.copy(vars.default_mappings_dist, vars.default_mappings)
@@ -151,9 +198,16 @@ def load_mappings() -> List[TextMapping]:
 
 
 def save_user_mappings(mappings: List[TextMapping], dest: Path):
-    with dest.open("wt") as fh:
-        for m in mappings:
-            fh.write(f"{m.pat.pattern} = {m.replacement_unsanitized}\n")
+    memo = SerializedMappingCollection(mappings, SCHEMA_VERSION)
+    dest.write_text(yaml.dump(memo))
+
+
+def load_user_mappings(src: Path) -> List[TextMapping]:
+    if src is None:
+        src = vars.user_mappings
+
+    memo: SerializedMappingCollection = yaml.load(src.read_text(), Loader=yaml.Loader)
+    return memo.mappings
 
 
 def save_default_mappings(
@@ -161,9 +215,7 @@ def save_default_mappings(
 ):
     memo = {
         "version": version,
-        "mappings": [
-            f"{m.pat.pattern} = {m.replacement_unsanitized}" for m in mappings
-        ],
+        "mappings": mappings,
     }
     dest.write_text(yaml.dump(memo))
 

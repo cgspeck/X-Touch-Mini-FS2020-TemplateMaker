@@ -14,9 +14,21 @@ def generate_mapping_templates(labels: List[Label]) -> List[TextMapping]:
     replacement_unsanitized = sanitise_replacement(DEFAULT_REPLACEMENT_TEXT)
 
     for l in labels:
+        if l.original is None:
+            continue
+
+        if l.original.event is None:
+            continue
+
+        value = None
+
+        if l.original.value is not None:
+            value = re.compile(l.original.value)
+
         memo.append(
             TextMapping(
-                re.compile(l.original),
+                re.compile(l.original.event),
+                value,
                 DEFAULT_REPLACEMENT_TEXT,
                 replacement_unsanitized=replacement_unsanitized,
                 in_use=True,

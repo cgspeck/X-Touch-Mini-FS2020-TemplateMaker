@@ -1,5 +1,4 @@
 from pathlib import Path
-import shutil
 import tkinter as tk
 from typing import Callable, List, Optional
 from tkinter import filedialog as fd
@@ -11,7 +10,6 @@ from template_maker.logger import get_logger
 from template_maker import vars
 from template_maker import text_mapping
 
-from semver import VersionInfo
 
 from template_maker.template_info import TemplateInfo
 
@@ -55,7 +53,7 @@ def import_mappings(self: tk.Tk, config: Config, success_cb: Callable[[], None])
 
     try:
         new_mapping_version = text_mapping.import_mappings(
-            fp, vars.user_mappings, vars.default_mappings
+            fp, vars.user_mappings_legacy, vars.default_mappings
         )
     except Exception as err:
         error_msg = f"Error parsing '{fp.name}':\n{err}"
@@ -86,8 +84,8 @@ def reset_mappings(self: tk.Tk, success_cb: Callable[[], None]):
     if yn != tk.YES:
         return
 
-    logger.info(f"Deleting {vars.user_mappings}")
-    vars.user_mappings.unlink()
+    logger.info(f"Deleting {vars.user_mappings_legacy}")
+    vars.user_mappings_legacy.unlink()
     logger.info(f"Deleting {vars.default_mappings}")
     vars.default_mappings.unlink()
     logger.info("Running success_cb")
