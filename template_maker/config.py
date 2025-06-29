@@ -21,8 +21,8 @@ logger = get_logger()
 class Config:
     inkscape_path: Path
     xtouch_mini_fs2020_path: Path
-    remove_unrecognized: bool
     defaults_enabled: bool
+    remove_unrecognized: bool = field(default=True)
     xtouch_mini_fs2020_aircraft_path: Path = field(init=False)
     schema_version = SCHEMA_VERSION
 
